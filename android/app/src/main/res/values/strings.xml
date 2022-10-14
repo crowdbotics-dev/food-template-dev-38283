@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">food-template-dev-38283</string>
     <string name="original_app_name">food-template</string>
+    <string name="facebook_app_id">1514092109010014</string>
+    <string name="server_client_id">678501629451-avll56qrb25mo5tdhb0vt8hc0rsl237p.apps.googleusercontent.com</string>
 </resources>

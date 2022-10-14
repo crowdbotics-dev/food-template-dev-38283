@@ -2,7 +2,7 @@ import mods from "./*/index.js";
 import { getModules } from "./modules.js"
 
 export const modules = getModules(mods);
-export const initialRoute = modules[0].value.title;
+export const initialRoute = "welcomeScreen"//modules[0].value.title;
 export const slices = modules.filter(mod => mod.value.slice).map(mod => mod.value.slice);
 export const reducers = slices.reduce((acc, slice) => {
   let name = slice.name.charAt(0).toUpperCase() + slice.name.slice(1)
