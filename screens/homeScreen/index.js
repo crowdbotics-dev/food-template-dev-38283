@@ -261,7 +261,7 @@ const exploreItemStyles = StyleSheet.create({
     marginHorizontal: 5,
     elevation: 1,
     marginVertical: 10,
-    backgroundColor: "#FCF1D6",
+    backgroundColor: "#f7eec4",
     overflow: "hidden",
     borderRadius: 10
   },

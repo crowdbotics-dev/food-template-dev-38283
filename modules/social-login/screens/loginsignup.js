@@ -426,7 +426,7 @@ import { Image, StyleSheet, TouchableHighlight } from "react-native";
 export const Signup = ({navigation}) => {
   const [checked, setChecked] = useState(true);
   const pressed = () => {
-    navigation.navigate("mapScreen")
+    navigation.navigate("homeScreen")
   };
   
   return (

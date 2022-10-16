@@ -1285,10 +1285,25 @@
 "@screens/home@file:./screens/homeScreen":
   version "1.0.0"
 
+"@screens/live-search@file:./screens/liveSearchScreen":
+  version "1.0.0"
+
+"@screens/live-search@file:./screens/liveSearchScreen/":
+  version "1.0.0"
+
 "@screens/map@file:./screens/mapScreen":
   version "1.0.0"
 
-"@screens/map@file:./screens/mapScreen/":
+"@screens/order-detail@file:./screens/orderDetailsScreen":
+  version "1.0.0"
+
+"@screens/order-receive@file:./screens/orderReceiveScreen":
+  version "1.0.0"
+
+"@screens/order-status@file:./screens/orderStatusScreen":
+  version "1.0.0"
+
+"@screens/payment@file:./screens/paymentScreen":
   version "1.0.0"
 
 "@screens/product-details@file:./screens/productScreen":
