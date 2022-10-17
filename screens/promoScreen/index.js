@@ -6,7 +6,8 @@ import {
     Pressable,
     Image,
     FlatList,
-    ScrollView
+    ScrollView,
+    LogBox
 } from "react-native";
 
 const TodayPromos = () => {
@@ -14,6 +15,7 @@ const TodayPromos = () => {
     const [productList, setProductList] = useState([]);
     const [addedProducts, setAddedProducts] = useState([]);
     useEffect(() => {
+        LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
         setProductList([
             {
                 id: 1,
@@ -22,16 +24,16 @@ const TodayPromos = () => {
                 discountedPrice: 10,
                 deliveryType: "Free delivery",
                 rating: 4.8,
-                image: require("../../assets/productImage.png")
+                image: require("./assets/productImage.png")
             },
             {
                 id: 2,
                 name: "Product name",
                 price: 12.59,
                 discountedPrice: 18,
-                deliveryType: "Free delivery",
+                deliveryType: "Delivery discount up to $10.",
                 rating: 4.8,
-                image: require("../../assets/productImage.png")
+                image: require("./assets/productImage.png")
             },
             {
                 id: 3,
@@ -40,7 +42,7 @@ const TodayPromos = () => {
                 discountedPrice: 18,
                 deliveryType: "Free delivery",
                 rating: 4.8,
-                image: require("../../assets/productImage.png")
+                image: require("./assets/productImage.png")
             }
         ]);
     }, []);
@@ -52,78 +54,80 @@ const TodayPromos = () => {
         }
     };
     return (
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <View style={{ paddingHorizontal: 10 }}>
-                <View style={styles.forgetContainer}>
-                    <Text style={styles.promoText}>Today's promo</Text>
-                    <Image source={require("../../assets/filter.png")} style={styles.filter} />
-                </View>
-                <TabView
-                    tabTitles={["Burger", "Pasta", "Salad", "Meat"]}
-                    selected={selectedTab}
-                    onPress={setSelectedTab}
-                    style={styles.tabView}
-                />
-                <DetailsCard></DetailsCard>
-                <FlatList
-                    data={productList}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={({ item }) => (
-                        <View style={styles.productContainer}>
-                            <View>
-                                <Image source={item.image} style={styles.productImage} />
-                                <Text style={styles.stock}>5 Left</Text>
-                            </View>
-                            <View style={styles.productDetails}>
-                                <Text style={styles.productName}>{item.name}</Text>
-                                <Text style={styles.pricingText}>
-                                    ${item.discountedPrice.toFixed(2)}{" "}
-                                </Text>
-                                <View style={styles.flexRow}>
-                                    <View style={styles.greenCircle}>
-                                        <Text style={[styles.white, styles.bold]}>%</Text>
+        <View style={styles.container}>
+            <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
+                <Image source={require("./assets/notification.png")} style={styles.notificationIcon} />
+                <View style={{ paddingHorizontal: 10 }}>
+                    <View style={styles.forgetContainer}>
+                        <Text style={styles.promoText}>Today's promo</Text>
+                        <Image source={require("./assets/filter.png")} style={styles.filter} />
+                    </View>
+                    <TabView
+                        tabTitles={["Burger", "Pasta", "Salad", "Meat"]}
+                        selected={selectedTab}
+                        onPress={setSelectedTab}
+                        style={styles.tabView}
+                    />
+                    <DetailsCard></DetailsCard>
+                    <FlatList
+                        data={productList}
+                        keyExtractor={item => item.id.toString()}
+                        showsVerticalScrollIndicator={false}
+                        renderItem={({ item }) => (
+                            <View style={styles.productContainer}>
+                                <View>
+                                    <Image source={item.image} style={styles.productImage} />
+                                    <Text style={styles.stock}>5 Left</Text>
+                                </View>
+                                <View style={styles.productDetails}>
+                                    <Text style={styles.productName}>{item.name}</Text>
+                                    <Text style={styles.pricingText}>
+                                        ${item.discountedPrice.toFixed(2)}{" "}
+                                    </Text>
+                                    <View style={styles.flexRow}>
+                                        <View style={styles.greenCircle}>
+                                            <Text style={[styles.white, styles.bold]}>%</Text>
+                                        </View>
+                                        <Text style={styles.fnt12}>{item.deliveryType}</Text>
                                     </View>
-                                    <Text style={styles.fnt12}>Free delivery</Text>
+                                </View>
+                                <View style={styles.buttons}>
+                                    <Pressable style={styles.heartIconContainer}>
+                                        <Image
+                                            source={require("./assets/heartIcon.png")}
+                                            style={styles.heartIcon}
+                                        />
+                                    </Pressable>
+                                    <Pressable style={styles.button} onPress={() => handleAddProduct(item)}>
+                                        <Image
+                                            source={
+                                                addedProducts.includes(item)
+                                                    ? require("./assets/doubleTickIcon.png")
+                                                    : require("./assets/addIcon.png")
+                                            }
+                                            style={styles.btnIcon}
+                                        />
+                                        <Text style={styles.btnText}>
+                                            {addedProducts.includes(item) ? "Added" : "Add"}
+                                        </Text>
+                                    </Pressable>
                                 </View>
                             </View>
-                            <View style={styles.buttons}>
-                                <Pressable style={styles.heartIconContainer}>
-                                    <Image
-                                        source={require("../../assets/heartIcon.png")}
-                                        style={styles.heartIcon}
-                                    />
-                                </Pressable>
-                                <Pressable
-                                    style={[
-                                        styles.button
-                                    ]}
-                                    onPress={() => handleAddProduct(item)}>
-                                    <Image
-                                        source={
-                                            addedProducts.includes(item)
-                                                ? require("../../assets/doubleTickIcon.png")
-                                                : require("../../assets/addIcon.png")
-                                        }
-                                        style={styles.btnIcon}
-                                    />
-                                    <Text style={styles.btnText}>
-                                        {addedProducts.includes(item) ? "Added" : "Add"}
-                                    </Text>
-                                </Pressable>
-                            </View>
-                        </View>
-                    )}
+                        )}
+                    />
+                </View>
+            </ScrollView>
+            <View style={styles.footer}>
+                <Footer
+                    images={[
+                        require("./assets/home.png"),
+                        require("./assets/box.png"),
+                        require("./assets/search.png"),
+                        require("./assets/user.png")
+                    ]}
                 />
             </View>
-            <Footer
-                images={[
-                    require("../../assets/home.png"),
-                    require("../../assets/box.png"),
-                    require("../../assets/search.png"),
-                    require("../../assets/user.png")
-                ]}
-            />
-        </ScrollView>
+        </View>
     );
 };
 const styles = StyleSheet.create({
@@ -133,7 +137,9 @@ const styles = StyleSheet.create({
     tabView: {
         width: "85%",
     },
+    scrollView: { marginBottom: 60 },
     productContainer: {
+        height: 153,
         marginVertical: 5,
         flexDirection: "row",
         paddingVertical: 10,
@@ -178,11 +184,10 @@ const styles = StyleSheet.create({
     flexRow: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 5
     },
     greenCircle: {
-        width: 20,
-        height: 20,
+        width: 18,
+        height: 18,
         borderRadius: 10,
         backgroundColor: "#12D790",
         justifyContent: "center",
@@ -190,10 +195,13 @@ const styles = StyleSheet.create({
         marginRight: 5
     },
     white: {
-        color: "#fff"
+        color: "#fff",
+        fontSize:12
     },
     fnt12: {
-        fontSize: 12
+        fontSize: 12,
+        color: "#7E7E7E",
+        paddingLeft: 5
     },
     bold: {
         fontWeight: "bold"
@@ -233,7 +241,8 @@ const styles = StyleSheet.create({
         width: 80,
         height: 40,
         backgroundColor: "#12D790",
-        borderRadius: 6
+        borderRadius: 6,
+        marginTop: 10
     },
     btnText: {
         color: "#fff"
@@ -260,6 +269,20 @@ const styles = StyleSheet.create({
     seeAll: { fontSize: 14, color: "#E84C4F" },
     filter: { height: 16, width: 16, resizeMode: "contain" },
     stock: { backgroundColor: "#12D790", padding: 5, color: '#fff', fontSize: 12, borderRadius: 4, textAlign: "center", width: 50, alignSelf: "center", marginTop: -15 },
+    footer: {
+        position: 'absolute',
+        flex: 0.1,
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
+    notificationIcon: {
+        height: 23,
+        width: 23,
+        resizeMode: "contain",
+        alignSelf: "flex-end",
+        marginTop: 10, marginRight: 20
+    },
 });
 
 export default TodayPromos;
@@ -356,13 +379,14 @@ const tabViewStyles = StyleSheet.create({
 });
 
 
+
 const DetailsCard = () => {
     return (
         <View style={detailsCardStyles.detailsCard}>
             <View style={detailsCardStyles.pricing}>
                 <Text style={detailsCardStyles.summaryText}>Food name</Text>
                 <View style={detailsCardStyles.ratings}>
-                    <Image source={require("../../assets/starIcon.png")}
+                    <Image source={require("./assets/starIcon.png")}
                         style={detailsCardStyles.icon} />
                     <Text style={detailsCardStyles.pricingText}>
                         5.0
@@ -373,7 +397,7 @@ const DetailsCard = () => {
             <View style={detailsCardStyles.pricing}>
                 <Text style={detailsCardStyles.pricingText}>Street name</Text>
                 <Text style={detailsCardStyles.pricingText}>
-                    $77
+                    1 Km
                 </Text>
             </View>
         </View>

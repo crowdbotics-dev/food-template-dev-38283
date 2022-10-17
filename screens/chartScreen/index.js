@@ -24,7 +24,7 @@ const ChartScreen = () => {
         discountedPrice: "Gravida eget augue viverra.",
         deliveryType: "Free delivery",
         rating: 4.8,
-        image: require("../../assets/productImage.png")
+        image: require("./assets/productImage.png")
       },
       {
         id: 2,
@@ -33,7 +33,7 @@ const ChartScreen = () => {
         discountedPrice: "Gravida eget augue viverra.",
         deliveryType: "Free delivery",
         rating: 4.8,
-        image: require("../../assets/productImage.png")
+        image: require("./assets/productImage.png")
       },
       {
         id: 3,
@@ -42,7 +42,7 @@ const ChartScreen = () => {
         discountedPrice: "Gravida eget augue viverra.",
         deliveryType: "Free delivery",
         rating: 4.8,
-        image: require("../../assets/productImage.png")
+        image: require("./assets/productImage.png")
       },
       {
         id: 4,
@@ -51,14 +51,14 @@ const ChartScreen = () => {
         discountedPrice: "Gravida eget augue viverra.",
         deliveryType: "Free delivery",
         rating: 4.8,
-        image: require("../../assets/productImage.png")
+        image: require("./assets/productImage.png")
       },
     ]);
   }, []);
 
   const leftSwipe = (id) => (
     <Pressable style={styles.leftSwipe} onPress={() => console.log("Deleted Item: ", id)}>
-      <Image source={require("../../assets/delete.png")} style={styles.delete} />
+      <Image source={require("./assets/delete.png")} style={styles.delete} />
     </Pressable>
   )
 
@@ -69,7 +69,7 @@ const ChartScreen = () => {
       <ScrollView style={[styles.chartContainer]} showsVerticalScrollIndicator={false}>
         <View style={styles.forgetContainer}>
           <Text style={styles.promoText}>Order details</Text>
-          <Image source={require("../../assets/basket.png")} style={styles.filter} />
+          <Image source={require("./assets/basket.png")} style={styles.filter} />
         </View>
         {productList && productList.map((item, index) =>
           <Swipeable renderRightActions={() =>leftSwipe(item.id)} key={index}>
@@ -96,7 +96,7 @@ const ChartScreen = () => {
                     style={[styles.counterBtn, styles.decrement]}
                     onPress={() => decrement()}>
                     <Image
-                      source={require("../../assets/minusIcon.png")}
+                      source={require("./assets/minusIcon.png")}
                       style={styles.icon}
                     />
                   </Pressable>
@@ -105,7 +105,7 @@ const ChartScreen = () => {
                     style={[styles.counterBtn, styles.increment]}
                     onPress={() => increment()}>
                     <Image
-                      source={require("../../assets/plusIcon.png")}
+                      source={require("./assets/plusIcon.png")}
                       style={styles.icon}
                     />
                   </Pressable>
@@ -120,23 +120,23 @@ const ChartScreen = () => {
           <Text style={styles.summaryText}>Free shipping</Text>
           <View style={styles.ratings}>
             <Image
-              source={require("../../assets/star.png")}
+              source={require("./assets/star.png")}
               style={styles.icon1}
             />
             <Image
-              source={require("../../assets/star.png")}
+              source={require("./assets/star.png")}
               style={styles.icon1}
             />
             <Image
-              source={require("../../assets/star.png")}
+              source={require("./assets/star.png")}
               style={styles.icon1}
             />
             <Image
-              source={require("../../assets/star.png")}
+              source={require("./assets/star.png")}
               style={styles.icon1}
             />
             <Image
-              source={require("../../assets/star.png")}
+              source={require("./assets/star.png")}
               style={styles.icon1}
             />
           </View>

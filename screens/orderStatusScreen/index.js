@@ -60,7 +60,7 @@ const OrderStatusScreen = () => {
                         source={index == orderStatus.length - 1 ? require("./assets/dot.png") : order.currentStatus ? require("./assets/statusbar1.png") : require("./assets/statusbar2.png")}
                         style={index == orderStatus.length - 1 ? styles.dot : styles.statusBar}
                     />
-                    <View>
+                    <View style={{paddingLeft: 5}}>
                         <View style={styles.orderStatusContainer}>
                             <Text style={[styles.statusHeading, { color: !order.currentStatus ? "#e7e7e7" : "#2A2B2E" }]}>{order.name}</Text>
                             <Text style={[styles.statusHeading, { color: !order.currentStatus ? "#e7e7e7" : "#2A2B2E", textAlign: 'right'}]}>{order.time}</Text>
@@ -99,7 +99,8 @@ const styles = StyleSheet.create({
     inputHeadings: {
         justifyContent: "space-between",
         flexDirection: "row",
-        paddingHorizontal: 5
+        paddingHorizontal: 5,
+        marginTop: 5
     },
     orderTime: {
         justifyContent: "space-between",
@@ -134,6 +135,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         paddingHorizontal: 10,
         marginTop: 10,
+        marginBottom: 5
     },
     statusBar: { height: 59, width: 12, resizeMode: "contain", },
     dot: { height: 12, width: 12, resizeMode: "contain",  opacity: 0.25},
@@ -142,7 +144,7 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     mr10: {
-        marginLeft: 10,
+        marginLeft: 15,
         marginBottom: 10
     },
 });

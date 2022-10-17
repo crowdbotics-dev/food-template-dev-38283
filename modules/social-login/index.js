@@ -21,7 +21,6 @@ import { slice } from "./auth"
 import { styles } from "./screens/styles"
 import { SignInTab, SignupTab, Signup } from "./screens/loginsignup"
 import PasswordReset from "./screens/reset"
-// import { getItem } from "../../utils"
 
 
 const LoginTabBar = ({ navigation, state, descriptors }) => {

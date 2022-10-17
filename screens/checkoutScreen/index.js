@@ -35,13 +35,17 @@ const CheckoutScreen = () => {
           <View style={{ flex: 1 }}>
             <Input placeholder='8th Street, San Francisco' />
           </View>
-          <Image source={require("../../assets/map.png")} style={styles.mr10} />
+          <Image source={require("./assets/map.png")} style={styles.mr10} />
         </View>
       </View>
       <View style={styles.mapContainer}>
-        <Image source={require("../../assets/mapIcon.png")} style={styles.mapIcon} />
+        <Image source={require("./assets/mapIcon.png")} style={styles.mapIcon} />
       </View>
-
+      <View style={styles.deliveryContainer}>
+        <Text style={styles.deliveryHeading}>Delivery to</Text>
+        <Text style={styles.receiver}>Name/Surname</Text>
+        <Text style={styles.address}>4041 8th Street, San Francisco</Text>
+      </View>
       <View style={styles.orderContainer}>
         <Text style={styles.orderHeading}>Your order</Text>
         {
@@ -71,7 +75,7 @@ const CheckoutScreen = () => {
         </View>
 
         <View style={styles.cardContainer}>
-          <Image source={require("../../assets/visa.png")} style={styles.visa} />
+          <Image source={require("./assets/visa.png")} style={styles.visa} />
           <View style={[styles.headTextContainer, { paddingRight: 0 }]}>
             <Text style={styles.cardText}>**** 4321</Text>
             <Text style={styles.editText}>Edit</Text>
@@ -182,7 +186,11 @@ const styles = StyleSheet.create({
   cardText: { fontSize: 16, marginRight: 10 },
   editText: { color: "#EA4335", fontWeight: "bold" },
   totalText: { color: "#313633", fontSize: 16 },
-  totalPrice: { color: "#000000", fontSize: 14 }
+  totalPrice: { color: "#000000", fontSize: 14 },
+  deliveryContainer:{paddingHorizontal: 10},
+  deliveryHeading:{color:"#1E2022", fontSize: 14, fontWeight: "bold", marginBottom: 7},
+  receiver:{color:"#1E2022", fontSize: 13,  marginBottom: 4},
+  address:{color:"#1E2022", fontSize: 12, marginBottom: 4}
 })
 
 

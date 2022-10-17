@@ -1270,10 +1270,19 @@
     redux-thunk "^2.4.1"
     reselect "^4.1.5"
 
+"@screens/account@file:./screens/accountScreen":
+  version "1.0.0"
+
 "@screens/address@file:./screens/addressScreen":
   version "1.0.0"
 
+"@screens/call@file:./screens/callScreen":
+  version "1.0.0"
+
 "@screens/chart@file:./screens/chartScreen":
+  version "1.0.0"
+
+"@screens/chat@file:./screens/chatScreen":
   version "1.0.0"
 
 "@screens/checkout@file:./screens/checkoutScreen":
@@ -1288,10 +1297,16 @@
 "@screens/live-search@file:./screens/liveSearchScreen":
   version "1.0.0"
 
-"@screens/live-search@file:./screens/liveSearchScreen/":
+"@screens/map@file:./screens/mapScreen":
   version "1.0.0"
 
-"@screens/map@file:./screens/mapScreen":
+"@screens/notification@file:./screens/notificationScreen":
+  version "1.0.0"
+
+"@screens/onboarding@file:./screens/onboardingScreen":
+  version "1.0.0"
+
+"@screens/onboarding@file:./screens/onboardingScreen/":
   version "1.0.0"
 
 "@screens/order-detail@file:./screens/orderDetailsScreen":

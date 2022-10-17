@@ -1,14 +1,20 @@
 import React from "react";
 import { Text, StyleSheet, View, Image, TouchableHighlight } from "react-native";
-const mapScreen = () => {
+const MapScreen = () => {
 
 
 
   return (
     <View style={[styles.container]}>
       <Image
-        source={require("../../assets/mapImg.png")}
+        // @ts-ignore
+        source={require("./assets/mapImg.png")}
         style={styles.blurImageStyle}
+      />
+      <Image
+        // @ts-ignore
+        source={require("./assets/map.png")}
+        style={styles.locIcon}
       />
       <View style={styles.cardContainer}>
         <View style={styles.ratingsStar}>
@@ -19,7 +25,8 @@ const mapScreen = () => {
           <View style={styles.pricing}>
             <Text style={styles.subtotalText}>Street name:</Text>
             <Image
-              source={require("../../assets/blurmap.png")}
+              // @ts-ignore
+              source={require("./assets/blurmap.png")}
               style={styles.map}
             />
           </View>
@@ -27,10 +34,10 @@ const mapScreen = () => {
             <Text style={styles.deliveryText}>Kind Street, San Francisco</Text>
           </View>
         </View>
-        <View style={{marginTop: 40}}>
-        <Button buttonText="Confirm" />
+        <View style={{ marginTop: 40 }}>
+          <Button buttonText="Confirm" />
         </View>
-        
+
       </View>
     </View>
   );
@@ -79,7 +86,7 @@ const styles = StyleSheet.create({
   subtotalText: {
     fontSize: 16,
     color: "#313633",
-    
+
   },
   deliveryText: {
     fontSize: 14,
@@ -95,10 +102,11 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     width: 38,
     height: 48,
-  }
+  },
+  locIcon: { height: 37, width: 29, resizeMode: "contain", position: 'absolute', alignSelf: "center", top: 300, right: 70 },
 });
 
-export default mapScreen;
+export default MapScreen;
 
 
 const Button = (props) => {

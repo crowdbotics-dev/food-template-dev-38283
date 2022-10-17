@@ -37,6 +37,8 @@ const styles = StyleSheet.create({
     },
     mobile: { width: 241, height: 228, resizeMode: "contain", marginTop: 40, marginRight: 20 },
     ratingContainer: {
+        borderColor:"#979797",
+        borderWidth: 1,
         marginHorizontal: 20,
         width: 330,
         marginTop: 20,
@@ -124,6 +126,8 @@ const DetailsCard = () => {
 
 const detailsCardStyles = StyleSheet.create({
     detailsCard: {
+        borderColor:"#979797",
+        borderWidth: 1,
         marginHorizontal: 20,
         height: 88,
         width: 330,

@@ -45,7 +45,7 @@ const PaymentScreen = () => {
                                 onChangeText={(text) => setCardNumber(text)}
                                 value={cardNumber}
                                 placeholder="1234 5678 9012 3456"
-                                placeholderTextColor="#9B9B9B"
+                                placeholderTextColor="#000"
                                 autoCapitalize="none"
                                 autoCorrect={false}
                             />
@@ -60,7 +60,7 @@ const PaymentScreen = () => {
                                 onChangeText={(text) => setCardExpiry(text)}
                                 value={cardExpiry}
                                 placeholder="10/24"
-                                placeholderTextColor="#9B9B9B"
+                                placeholderTextColor="#000"
                                 autoCapitalize="none"
                                 autoCorrect={false}
                             />
@@ -69,7 +69,7 @@ const PaymentScreen = () => {
                                 onChangeText={(text) => setCvv(text)}
                                 value={cvv}
                                 placeholder="374"
-                                placeholderTextColor="#9B9B9B"
+                                placeholderTextColor="#000"
                                 autoCapitalize="none"
                                 autoCorrect={false}
                             />
@@ -81,7 +81,7 @@ const PaymentScreen = () => {
                                 onChangeText={(text) => setName(text)}
                                 value={name}
                                 placeholder="Username"
-                                placeholderTextColor="#9B9B9B"
+                                placeholderTextColor="#000"
                                 autoCapitalize="none"
                                 autoCorrect={false}
                             />
@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginVertical: 10,
         paddingLeft: 20,
+        backgroundColor:"#f9f9f9"
     },
     userInput: {
         borderWidth: 1,
@@ -154,6 +155,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginVertical: 10,
         paddingLeft: 20,
+        backgroundColor:"#f9f9f9"
     },
     inputText: {
         fontSize: 14,
@@ -162,7 +164,8 @@ const styles = StyleSheet.create({
     input: {
         padding: 10,
         paddingLeft: 20,
-        height: 49
+        height: 49,
+        backgroundColor:"#f9f9f9"
     },
     halfInputs: {
         borderWidth: 1,
@@ -170,7 +173,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: "space-between",
         flexDirection: "row",
-        paddingRight: 10
+        paddingRight: 10,
+        backgroundColor:"#f9f9f9"
     },
     inputHeadings: {
         justifyContent: "space-between",
@@ -184,6 +188,7 @@ const styles = StyleSheet.create({
         borderRightColor: "#fff",
         borderTopRightRadius: 0,
         borderBottomRightRadius: 0,
+        
 
     },
     input2: {

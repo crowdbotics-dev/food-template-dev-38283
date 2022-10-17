@@ -17,7 +17,7 @@ const Welcome = ({navigation}) => {
       <Image
         style={styles.background}
         // @ts-ignore
-        source={require("../../assets/welcome.png")}
+        source={require("./assets/welcome.png")}
       />
       <Text style={styles.heading}>Welcome Back</Text>
       <Text style={styles.description}>

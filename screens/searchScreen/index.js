@@ -6,168 +6,243 @@ const SearchScreen = () => {
 
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={{paddingHorizontal: 10}}>
-      <View style={styles.header}>
-        <Text style={styles.back} />
-        <Text style={styles.heading}>Search</Text>
-        <Image
-          source={require("../../assets/file.png")}
-          style={styles.message}
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
+        <View style={{ paddingHorizontal: 10 }}>
+          <View style={styles.header}>
+            <Text style={styles.back} />
+            <Text style={styles.heading}>Search</Text>
+            <Image
+              // @ts-ignore
+              source={require("./assets/file.png")}
+              style={styles.message}
+            />
+          </View>
+          <View style={styles.searchContainer}>
+            <Text style={styles.headText}>Search</Text>
+            <View style={styles.inputText}>
+              <View style={{ flex: 1 }}>
+                <Input placeholder='Enter' />
+              </View>
+              <Image source={require(
+                // @ts-ignore
+                "./assets/search.png")} style={styles.mr10} />
+            </View>
+          </View>
+          <
+            // @ts-ignore
+            TabView1
+            tabTitles={["Filters", "Nearby", "Above 4.5", "Cheapest"]}
+            selected={selectedTab}
+            onPress={setSelectedTab}
+            style={styles.tabView1}
+            icons={[
+              // @ts-ignore
+              require("./assets/tabfilter.png"),
+              // @ts-ignore
+              require("./assets/tabshare.png"),
+              // @ts-ignore
+              require("./assets/tabstar.png"),
+              // @ts-ignore
+              require("./assets/tabtag.png")
+            ]}
+          />
+          <View style={styles.forgetContainer}>
+            <Text style={styles.promoText}>Recent search</Text>
+          </View>
+          <TabView
+            tabTitles={["Pizza", "Breakfast", "Pancake"]}
+            // @ts-ignore
+            selected={selectedTab}
+            onPress={setSelectedTab}
+            style={styles.tabView}
+          />
+
+          <View style={styles.forgetContainer}>
+            <Text style={styles.promoText}>Popular cousin</Text>
+          </View>
+          <TabView
+            tabTitles={["Italian", "Mexican", "Spanish"]}
+            // @ts-ignore
+            selected={selectedTab}
+            onPress={setSelectedTab}
+            style={styles.tabView}
+          />
+
+          <View style={[styles.forgetContainer1]}>
+            <Text style={styles.promoText}>Popular food</Text>
+            <Image source={require(
+              // @ts-ignore
+              "./assets/filter.png")} style={styles.filter} />
+          </View>
+
+          <View style={styles.centerBox}>
+            <View>
+              <View style={styles.box}>
+                <View style={styles.courseTop}>
+                  <Pressable style={styles.heartIconContainer}>
+                    <Image
+                      // @ts-ignore
+                      source={require("./assets/heartIcon.png")}
+                      style={styles.heartIcon}
+                    />
+                  </Pressable>
+                  <Text style={styles.rateLabel}>4.7</Text>
+                </View>
+                <View style={styles.imageBox}>
+                  <Image source={require(
+                    // @ts-ignore
+                    "./assets/edit.png")} style={styles.editImg} />
+                </View>
+              </View>
+              <View style={styles.boxBottom}>
+
+                <View style={styles.nameContainer}>
+                  <Text style={styles.courseName}>Food name</Text>
+                  <View style={styles.nameContainer}>
+                  <Text style={{fontSize: 8, color: "#7C7C7C"}}>1.3mi </Text>
+                    <Image source={require(
+                      // @ts-ignore
+                      "./assets/loc.png")} style={styles.loc} />
+                  </View>
+                </View>
+
+                <View style={styles.cardsContainer}>
+                  <Image source={require(
+                    // @ts-ignore
+                    "./assets/cards.png")} style={styles.cards} />
+                  <Text style={styles.count}>+5 comments</Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <View style={[styles.box, styles.color]}>
+                <View style={styles.courseTop}>
+                  <Pressable style={styles.heartIconContainer}>
+                    <Image
+                      // @ts-ignore
+                      source={require("./assets/heartIcon.png")}
+                      style={styles.heartIcon}
+                    />
+                  </Pressable>
+                  <Text style={styles.rateLabel}>4.7</Text>
+                </View>
+                <View style={styles.imageBox}>
+                  <Image source={require(
+                    // @ts-ignore
+                    "./assets/edit.png")} style={styles.editImg} />
+                </View>
+              </View>
+              <View style={[styles.boxBottom, styles.ml10]}>
+              <View style={styles.nameContainer}>
+                  <Text style={styles.courseName}>Food name</Text>
+                  <View style={styles.nameContainer}>
+                  <Text style={{fontSize: 8, color: "#7C7C7C"}}>1.3mi </Text>
+                    <Image source={require(
+                      // @ts-ignore
+                      "./assets/loc.png")} style={styles.loc} />
+                  </View>
+                </View>
+                <View style={styles.cardsContainer}>
+                  <Image source={require(
+                    // @ts-ignore
+                    "./assets/cards.png")} style={styles.cards} />
+                  <Text style={styles.count}>+5 Comments</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+          <View style={styles.centerBox}>
+            <View>
+              <View style={styles.box}>
+                <View style={styles.courseTop}>
+                  <Pressable style={styles.heartIconContainer}>
+                    <Image
+                      // @ts-ignore
+                      source={require("./assets/heartIcon.png")}
+                      style={styles.heartIcon}
+                    />
+                  </Pressable>
+                  <Text style={styles.rateLabel}>4.7</Text>
+                </View>
+                <View style={styles.imageBox}>
+                  <Image source={require(
+                    // @ts-ignore
+                    "./assets/edit.png")} style={styles.editImg} />
+                </View>
+              </View>
+              <View style={styles.boxBottom}>
+              <View style={styles.nameContainer}>
+                  <Text style={styles.courseName}>Food name</Text>
+                  <View style={styles.nameContainer}>
+                  <Text style={{fontSize: 8, color: "#7C7C7C"}}>1.3mi </Text>
+                    <Image source={require(
+                      // @ts-ignore
+                      "./assets/loc.png")} style={styles.loc} />
+                  </View>
+                </View>
+                <View style={styles.cardsContainer}>
+                  <Image source={require(
+                    // @ts-ignore
+                    "./assets/cards.png")} style={styles.cards} />
+                  <Text style={styles.count}>+5 Comments</Text>
+                </View>
+              </View>
+            </View>
+            <View>
+              <View style={[styles.box, styles.color]}>
+                <View style={styles.courseTop}>
+                  <Pressable style={styles.heartIconContainer}>
+                    <Image
+                      // @ts-ignore
+                      source={require("./assets/heartIcon.png")}
+                      style={styles.heartIcon}
+                    />
+                  </Pressable>
+                  <Text style={styles.rateLabel}>4.7</Text>
+                </View>
+                <View style={styles.imageBox}>
+                  <Image source={require(
+                    // @ts-ignore
+                    "./assets/edit.png")} style={styles.editImg} />
+                </View>
+              </View>
+              <View style={[styles.boxBottom, styles.ml10]}>
+              <View style={styles.nameContainer}>
+                  <Text style={styles.courseName}>Food name</Text>
+                  <View style={styles.nameContainer}>
+                  <Text style={{fontSize: 8, color: "#7C7C7C"}}>1.3mi </Text>
+                    <Image source={require(
+                      // @ts-ignore
+                      "./assets/loc.png")} style={styles.loc} />
+                  </View>
+                </View>
+                <View style={styles.cardsContainer}>
+                  <Image source={require(
+                    // @ts-ignore
+                    "./assets/cards.png")} style={styles.cards} />
+                  <Text style={styles.count}>+5 Comments</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+      <View style={styles.footer}>
+        <Footer
+          images={[
+            // @ts-ignore
+            require("./assets/shome.png"),
+            // @ts-ignore
+            require("./assets/box.png"),
+            // @ts-ignore
+            require("./assets/redsearch.png"),
+            // @ts-ignore
+            require("./assets/user.png")
+          ]}
         />
       </View>
-      <View style={styles.searchContainer}>
-        <Text style={styles.headText}>Search</Text>
-        <View style={styles.inputText}>
-          <View style={{ flex: 1 }}>
-            <Input placeholder='Enter' />
-          </View>
-          <Image source={require("../../assets/search.png")} style={styles.mr10} />
-        </View>
-      </View>
-      <TabView1
-        tabTitles={["Filters", "Nearby", "Above 4.5", "Cheapest"]}
-        selected={selectedTab}
-        onPress={setSelectedTab}
-        style={styles.tabView1}
-        icons={[
-          require("../../assets/tabfilter.png"),
-          require("../../assets/tabshare.png"),
-          require("../../assets/tabstar.png"),
-          require("../../assets/tabtag.png")
-        ]}
-      />
-      <View style={styles.forgetContainer}>
-        <Text style={styles.promoText}>Recent search</Text>
-      </View>
-      <TabView
-        tabTitles={["Pizza", "Breakfast", "Pancake"]}
-        selected={selectedTab}
-        onPress={setSelectedTab}
-        style={styles.tabView}
-      />
-
-      <View style={styles.forgetContainer}>
-        <Text style={styles.promoText}>Popular cousin</Text>
-      </View>
-      <TabView
-        tabTitles={["Italian", "Mexican", "Spanish"]}
-        selected={selectedTab}
-        onPress={setSelectedTab}
-        style={styles.tabView}
-      />
-
-      <View style={[styles.forgetContainer1]}>
-        <Text style={styles.promoText}>Popular food</Text>
-        <Image source={require("../../assets/filter.png")} style={styles.filter} />
-      </View>
-
-      <View style={styles.centerBox}>
-        <View>
-          <View style={styles.box}>
-            <View style={styles.courseTop}>
-              <Pressable style={styles.heartIconContainer}>
-                <Image
-                  source={require("../../assets/heartIcon.png")}
-                  style={styles.heartIcon}
-                />
-              </Pressable>
-              <Text style={styles.rateLabel}>4.7</Text>
-            </View>
-            <View style={styles.imageBox}>
-              <Image source={require("../../assets/edit.png")} style={styles.editImg} />
-            </View>
-          </View>
-          <View style={styles.boxBottom}>
-            <Text style={styles.courseName}>Course name</Text>
-            <View style={styles.cardsContainer}>
-              <Image source={require("../../assets/cards.png")} style={styles.cards} />
-              <Text style={styles.count}>48 Enrolled</Text>
-            </View>
-          </View>
-        </View>
-        <View>
-          <View style={[styles.box, styles.color]}>
-            <View style={styles.courseTop}>
-              <Pressable style={styles.heartIconContainer}>
-                <Image
-                  source={require("../../assets/heartIcon.png")}
-                  style={styles.heartIcon}
-                />
-              </Pressable>
-              <Text style={styles.rateLabel}>4.7</Text>
-            </View>
-            <View style={styles.imageBox}>
-              <Image source={require("../../assets/edit.png")} style={styles.editImg} />
-            </View>
-          </View>
-          <View style={[styles.boxBottom, styles.ml10]}>
-            <Text style={styles.courseName}>Course name</Text>
-            <View style={styles.cardsContainer}>
-              <Image source={require("../../assets/cards.png")} style={styles.cards} />
-              <Text style={styles.count}>48 Enrolled</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-      <View style={styles.centerBox}>
-        <View>
-          <View style={styles.box}>
-            <View style={styles.courseTop}>
-              <Pressable style={styles.heartIconContainer}>
-                <Image
-                  source={require("../../assets/heartIcon.png")}
-                  style={styles.heartIcon}
-                />
-              </Pressable>
-              <Text style={styles.rateLabel}>4.7</Text>
-            </View>
-            <View style={styles.imageBox}>
-              <Image source={require("../../assets/edit.png")} style={styles.editImg} />
-            </View>
-          </View>
-          <View style={styles.boxBottom}>
-            <Text style={styles.courseName}>Course name</Text>
-            <View style={styles.cardsContainer}>
-              <Image source={require("../../assets/cards.png")} style={styles.cards} />
-              <Text style={styles.count}>48 Enrolled</Text>
-            </View>
-          </View>
-        </View>
-        <View>
-          <View style={[styles.box, styles.color]}>
-            <View style={styles.courseTop}>
-              <Pressable style={styles.heartIconContainer}>
-                <Image
-                  source={require("../../assets/heartIcon.png")}
-                  style={styles.heartIcon}
-                />
-              </Pressable>
-              <Text style={styles.rateLabel}>4.7</Text>
-            </View>
-            <View style={styles.imageBox}>
-              <Image source={require("../../assets/edit.png")} style={styles.editImg} />
-            </View>
-          </View>
-          <View style={[styles.boxBottom, styles.ml10]}>
-            <Text style={styles.courseName}>Course name</Text>
-            <View style={styles.cardsContainer}>
-              <Image source={require("../../assets/cards.png")} style={styles.cards} />
-              <Text style={styles.count}>48 Enrolled</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-      </View>
-      <Footer
-        images={[
-          require("../../assets/shome.png"),
-          require("../../assets/box.png"),
-          require("../../assets/redsearch.png"),
-          require("../../assets/user.png")
-        ]}
-      />
-    </ScrollView>
+    </View>
   )
 }
 
@@ -184,7 +259,7 @@ const styles = StyleSheet.create({
   tabView1: {
     width: "110%",
   },
-  searchContainer: {backgroundColor: "#f1f1f1"},
+  searchContainer: { backgroundColor: "#f1f1f1" },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -267,6 +342,18 @@ const styles = StyleSheet.create({
     fontSize: 18, fontWeight: "500"
   },
   filter: { height: 16, width: 16, resizeMode: "contain" },
+  footer: {
+    position: 'absolute',
+    flex: 0.1,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  scrollView: { marginBottom: 60 },
+  nameContainer:{ flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between"},
+  loc:{height: 10, width: 10, resizeMode: "contain"}
 });
 
 
@@ -278,7 +365,7 @@ export const Input = (props) => {
         placeholder={props.placeholder}
         value={props.value}
         onChangeText={(num) => props.setValue(num)}
-        placeholderTextColor='#ddd'
+        placeholderTextColor='#000'
         editable={props.editable !== false}
       />
       {props.errorText ? <Text style={textStyles.error}>{props.errorText}</Text> : null}
@@ -304,12 +391,9 @@ const textStyles = StyleSheet.create({
 
 const TabView = ({
   tabTitles,
-  selected,
   onPress,
   tabColor,
-  backgroundColor,
   style,
-  icons
 }) => {
   const tabColorStyle = {
     backgroundColor: tabColor || "#EAE6E6"
@@ -323,7 +407,7 @@ const TabView = ({
           onPress={() => (onPress ? onPress(index) : null)}
           style={[tabViewStyles.selected, tabColorStyle, tabViewStyles.tabItem]}
           key={index}>
-          <Text  style={{fontSize: 12}}>{title}</Text>
+          <Text style={{ fontSize: 12 }}>{title}</Text>
         </Pressable>
       ))}
     </View>
@@ -398,23 +482,23 @@ const TabView1 = ({
               ? [tabViewStyles1.selected, tabColorStyle, tabViewStyles1.tabItem]
               : [
                 tabViewStyles1.unSelected,
-                  backgroundColorStyle,
-                  tabViewStyles1.tabItem
-                ]
+                backgroundColorStyle,
+                tabViewStyles1.tabItem
+              ]
           }
           key={index}>
           {icons
             ? (
-            <Image
-              source={icons[index]}
-              style={[
-                tabViewStyles1.icon,
-                index === selected
-                  ? tabViewStyles1.selectedIcon
-                  : tabViewStyles1.unSelectedIcon
-              ]}
-            />
-              )
+              <Image
+                source={icons[index]}
+                style={[
+                  tabViewStyles1.icon,
+                  index === selected
+                    ? tabViewStyles1.selectedIcon
+                    : tabViewStyles1.unSelectedIcon
+                ]}
+              />
+            )
             : null}
           <Text>{title}</Text>
         </Pressable>
@@ -454,7 +538,6 @@ const tabViewStyles1 = StyleSheet.create({
     height: 16,
     resizeMode: "contain",
     marginRight: 5,
-    color:"#EA4335"
   },
   selectedIcon: {
     tintColor: "#EA4335"

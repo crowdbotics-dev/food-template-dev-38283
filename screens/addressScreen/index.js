@@ -11,11 +11,11 @@ const AddressScreen = () => {
           <View style={{ flex: 1 }}>
             <Input placeholder='8th Street, San Francisco' />
           </View>
-          <Image source={require("../../assets/map.png")} style={styles.mr10} />
+          <Image source={require("./assets/map.png")} style={styles.mr10} />
         </View>
       </View>
       <View style={styles.mapContainer}>
-        <Image source={require("../../assets/mapIcon.png")} style={styles.mapIcon} />
+        <Image source={require("./assets/mapIcon.png")} style={styles.mapIcon} />
       </View>
       <View style={styles.searchContainer}>
         <Text style={[styles.headText]}>Search</Text>
@@ -23,7 +23,7 @@ const AddressScreen = () => {
           <View style={{ flex: 1 }}>
             <Input placeholder='Search' />
           </View>
-          <Image source={require("../../assets/search.png")} style={styles.mr10} />
+          <Image source={require("./assets/search.png")} style={styles.mr10} />
         </View>
       </View>
 
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     width: 370,
     borderRadius: 15
   },
-  subheading: { fontSize: 16, color: "#1E2022", fontWeight: "bold", marginTop: 30, marginBottom: 5, paddingLeft: 20, paddingBottom: 10, borderBottomColor: "rgba(217, 217, 217, 0.3);", borderBottomWidth: 1 },
+  subheading: { fontSize: 16, color: "#1E2022", fontWeight: "bold", marginTop: 30, marginBottom: 5, paddingLeft: 10, paddingBottom: 10, borderBottomColor: "rgba(217, 217, 217, 0.3);", borderBottomWidth: 1 },
   addressDelete: { fontSize: 14, color: "#EA4335", fontWeight: "bold", marginRight: 10, },
   addAddress: { fontSize: 14, color: "#12D790", fontWeight: "bold", marginLeft: 10, marginVertical: 20 },
 })

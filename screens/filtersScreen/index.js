@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { Text, StyleSheet, View, Image, Switch, ScrollView, TouchableHighlight } from "react-native";
+import { Text, StyleSheet, View, ScrollView, TouchableHighlight } from "react-native";
 import { Checkbox } from "react-native-paper"
 const FiltersScreen = () => {
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(false);
   const [checked1, setChecked1] = useState(true);
-  const [checked2, setChecked2] = useState(true);
+  const [checked2, setChecked2] = useState(false);
   const [checked3, setChecked3] = useState(true);
-  const [checked4, setChecked4] = useState(true);
+  const [checked4, setChecked4] = useState(false);
   const [checked5, setChecked5] = useState(true);
-  const [checked6, setChecked6] = useState(true);
+  const [checked6, setChecked6] = useState(false);
   const [checked7, setChecked7] = useState(true);
   const [checked8, setChecked8] = useState(true);
   return (
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     paddingVertical: 4
   },
-  subHeading: { fontSize: 16, fontWeight: "500", color: "#4A4A4A", marginLeft: 20, marginBottom: 10, },
+  subHeading: { fontSize: 16, fontWeight: "500", color: "#4A4A4A", marginLeft: 15, marginBottom: 10, },
   label: { fontSize: 14, marginLeft: 10},
   btnContainer: {
     marginTop: 10,

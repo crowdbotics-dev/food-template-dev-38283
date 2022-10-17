@@ -127,12 +127,12 @@ const styles = StyleSheet.create({
   orderStatusContainer: {
     justifyContent: "space-between",
     flexDirection: "row",
-    paddingLeft: 10,
+    paddingLeft: 15,
     paddingRight: 8,
     marginTop: -2, marginBottom: 4,
   },
   statusHeading: { fontSize: 12, width: "50%", color: "#2A2B2E" },
-  statusText: { paddingHorizontal: 10, fontSize: 10, color: "#2A2B2E" },
+  statusText: { paddingHorizontal: 15, fontSize: 10, color: "#2A2B2E" },
   statusTime: { textAlign: 'right', marginTop: -15 },
   ratings: {
     justifyContent: "space-between",

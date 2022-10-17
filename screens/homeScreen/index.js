@@ -30,82 +30,87 @@ const Home = ({ navigation }) => {
     },
   ]
   return (
-    <ScrollView style={styles.container}  showsVerticalScrollIndicator={false}>
-      <View style={{paddingHorizontal: 10}}>
-      <View style={styles.searchContainer}>
-        <Text style={styles.headText}>Address</Text>
-        <View style={styles.inputText}>
-          <View style={{ flex: 1 }}>
-            <Input placeholder='Enter' />
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
+        <Image source={require("./assets/notification.png")} style={styles.notificationIcon} />
+        <View style={{ paddingHorizontal: 10 }}>
+          <View style={styles.searchContainer}>
+            <Text style={styles.headText}>Address</Text>
+            <View style={styles.inputText}>
+              <View style={{ flex: 1 }}>
+                <Input placeholder='Enter' />
+              </View>
+              <Image source={require("./assets/address.png")} style={styles.mr10} />
+            </View>
           </View>
-          <Image source={require("../../assets/address.png")} style={styles.mr10} />
-        </View>
-      </View>
 
-      <View style={styles.heading}>
-        <Text style={styles.headingText}>Hello, Username</Text>
-        <Text style={styles.text}>What do you want to eat?</Text>
-      </View>
-      <View style={styles.imageContainer}>
-        <View>
-          <View style={styles.iconContainer}>
-            <Image
-              source={require("../../assets/blackheart.png")}
-              style={styles.icon}
-            />
+          <View style={styles.heading}>
+            <Text style={styles.headingText}>Hello, Username</Text>
+            <Text style={styles.text}>What do you want to eat?</Text>
           </View>
-          <Text style={styles.iconText}>Favorite</Text>
-        </View>
-        <View>
-          <View style={styles.iconContainer}>
-            <Image
-              source={require("../../assets/pin.png")}
-              style={styles.iconCheap}
-            />
+          <View style={styles.imageContainer}>
+            <View>
+              <View style={styles.iconContainer}>
+                <Image
+                  source={require("./assets/blackheart.png")}
+                  style={styles.icon}
+                />
+              </View>
+              <Text style={styles.iconText}>Favorite</Text>
+            </View>
+            <View>
+              <View style={styles.iconContainer}>
+                <Image
+                  source={require("./assets/pin.png")}
+                  style={styles.iconCheap}
+                />
+              </View>
+              <Text style={styles.iconText}>Cheap</Text>
+            </View>
+            <View>
+              <View style={styles.iconContainer}>
+                <Image
+                  source={require("./assets/trend.png")}
+                  style={styles.icon}
+                />
+              </View>
+              <Text style={styles.iconText}>Trend</Text>
+            </View>
+            <View>
+              <View style={styles.iconContainer}>
+                <Image
+                  source={require("./assets/dots.png")}
+                  style={styles.icon}
+                />
+              </View>
+              <Text style={styles.iconText}>More</Text>
+            </View>
           </View>
-          <Text style={styles.iconText}>Cheap</Text>
-        </View>
-        <View>
-          <View style={styles.iconContainer}>
-            <Image
-              source={require("../../assets/trend.png")}
-              style={styles.icon}
-            />
+          <View style={styles.forgetContainer}>
+            <Text style={styles.promoText}>Today's promo</Text>
+            <Text style={styles.seeAll}>See all</Text>
           </View>
-          <Text style={styles.iconText}>Trend</Text>
-        </View>
-        <View>
-          <View style={styles.iconContainer}>
-            <Image
-              source={require("../../assets/dots.png")}
-              style={styles.icon}
-            />
-          </View>
-          <Text style={styles.iconText}>More</Text>
-        </View>
-      </View>
-      <View style={styles.forgetContainer}>
-        <Text style={styles.promoText}>Today's promo</Text>
-        <Text style={styles.seeAll}>See all</Text>
-      </View>
 
-      <FlatList
-        data={data}
-        renderItem={({ item }) => <ExploreItem event={item} />}
-        keyExtractor={item => item.id.toString()}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-      />
-</View>
-      <Footer
-        images={[
-          require("../../assets/home.png"),
-          require("../../assets/box.png"),
-          require("../../assets/search.png"),
-          require("../../assets/user.png")
-        ]}
-      />
-    </ScrollView>
+          <FlatList
+            data={data}
+            renderItem={({ item }) => <ExploreItem event={item} />}
+            keyExtractor={item => item.id.toString()}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+      </ScrollView>
+      <View style={styles.footer}>
+        <Footer
+          images={[
+            require("./assets/home.png"),
+            require("./assets/box.png"),
+            require("./assets/search.png"),
+            require("./assets/user.png")
+          ]}
+        />
+      </View>
+    </View>
   );
 };
 const styles = StyleSheet.create({
@@ -115,13 +120,15 @@ const styles = StyleSheet.create({
     // backgroundColor: "#F2F2F2",
   },
   searchContainer: {},
+  scrollView:{marginBottom: 60},
   inputText: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
     borderRadius: 10,
     borderColor: "#C4C4C4",
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    marginHorizontal: 5
   },
   mr10: {
     marginRight: 10,
@@ -129,8 +136,15 @@ const styles = StyleSheet.create({
     width: 20,
     resizeMode: "contain"
   },
+  notificationIcon: {
+    height: 23,
+    width: 23,
+    resizeMode: "contain",
+    alignSelf: "flex-end",
+    marginTop: 10, marginRight: 20
+  },
   headText: {
-    marginLeft: 10,
+    marginLeft: 20,
     marginVertical: 10
   },
   heading: {
@@ -145,7 +159,7 @@ const styles = StyleSheet.create({
   text: { color: "#888888", lineHeight: 20 },
   forgetContainer: {
     marginTop: 35,
-    marginBottom: 15,
+    marginBottom: 10,
     paddingHorizontal: 10,
     flexDirection: "row",
     alignItems: "center",
@@ -155,15 +169,15 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     justifyContent: "space-between"
   },
   iconContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    height: 75,
-    width: 75,
+    height: 70,
+    width: 70,
     borderRadius: 6,
     backgroundColor: "#FFF",
     shadowColor: "rgba(0,0,0,0.5)",
@@ -176,8 +190,8 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   icon: {
-    height: 40,
-    width: 40,
+    height: 38,
+    width: 38,
     resizeMode: "contain",
   },
   iconCheap: { resizeMode: "contain", height: 32, width: 32 },
@@ -185,7 +199,14 @@ const styles = StyleSheet.create({
     fontSize: 24, fontWeight: "500"
   },
   seeAll: { fontSize: 14, color: "#E84C4F" },
-  iconText: { color: "#7E7E7E", alignSelf: "center", marginTop: 10 }
+  iconText: { color: "#7E7E7E", alignSelf: "center", marginTop: 10 },
+  footer: {
+    position: 'absolute',
+    flex: 0.1,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  }
 });
 
 export default Home;
@@ -214,7 +235,6 @@ const textStyles = StyleSheet.create({
     color: "#000",
     borderRadius: 10,
     fontSize: 14,
-    paddingHorizontal: 10
   },
   error: {
     fontSize: 13,
@@ -233,7 +253,7 @@ const ExploreItem = ({ event }) => {
           <Text style={exploreItemStyles.headingText}>Best dinner{'\n'}of the day</Text>
         </View>
         <View style={exploreItemStyles.imgContainer}>
-          <Image source={require("../../assets/redheart.png")} style={exploreItemStyles.image} />
+          <Image source={require("./assets/redheart.png")} style={exploreItemStyles.image} />
         </View>
       </View>
 

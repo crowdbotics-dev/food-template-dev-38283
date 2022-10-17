@@ -4,7 +4,10 @@ import { Text, View, StyleSheet, Image, Pressable, ScrollView, ImageBackground }
 import { RadioButton } from 'react-native-paper';
 
 const ProductDetails = () => {
-  const [checked, setChecked] = useState('first');
+  const [checked, setChecked] = useState(false);
+  const [checked2, setChecked2] = useState(true);
+  const [checked3, setChecked3] = useState(false);
+  const [checked4, setChecked4] = useState(false);
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
   useEffect(() => {
@@ -30,10 +33,10 @@ const ProductDetails = () => {
   };
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <ImageBackground source={require("../../assets/background.png")} resizeMode="cover" style={styles.imageContainer}>
+      <ImageBackground source={require("./assets/background.png")} resizeMode="cover" style={styles.imageContainer}>
         <Pressable style={styles.heartIconContainer}>
           <Image
-            source={require("../../assets/heartIcon.png")}
+            source={require("./assets/heartIcon.png")}
             style={styles.heartIcon}
           />
         </Pressable>
@@ -51,8 +54,8 @@ const ProductDetails = () => {
         </View>
         <Text style={styles.description}>{product.description}</Text>
         <View style={styles.cardsContainer}>
-          <Image source={require("../../assets/cards.png")} style={styles.cards} />
-          <Text style={styles.count}>48 comments</Text>
+          <Image source={require("./assets/cards.png")} style={styles.cards} />
+          <Text style={styles.count}>+50 Comments</Text>
         </View>
         <View style={styles.flexRow}>
         </View>
@@ -67,7 +70,7 @@ const ProductDetails = () => {
               style={[styles.counterBtn, styles.decrement]}
               onPress={() => decrement()}>
               <Image
-                source={require("../../assets/minusIcon.png")}
+                source={require("./assets/minusIcon.png")}
                 style={styles.icon}
               />
             </Pressable>
@@ -76,7 +79,7 @@ const ProductDetails = () => {
               style={[styles.counterBtn, styles.increment]}
               onPress={() => increment()}>
               <Image
-                source={require("../../assets/plusIcon.png")}
+                source={require("./assets/plusIcon.png")}
                 style={styles.icon}
               />
             </Pressable>
@@ -84,7 +87,7 @@ const ProductDetails = () => {
         </View>
         <Text style={styles.caption}>{product.caption}</Text>
 
-        <Pressable style={styles.pricing} onPress={() => setChecked('first')}>
+        <Pressable style={styles.pricing} onPress={() => setChecked(!checked)}>
           <Text style={styles.summaryText}>Lorem ipsum </Text>
           <View style={styles.ratings}>
             <Text style={styles.pricingText}>
@@ -93,53 +96,53 @@ const ProductDetails = () => {
             <RadioButton
               value="first"
               color="#EA4335"
-              status={checked === 'first' ? 'checked' : 'unchecked'}
-              onPress={() => setChecked('first')}
+              status={checked ? 'checked' : 'unchecked'}
+              onPress={() => setChecked(!checked)}
             />
           </View>
 
         </Pressable>
-        <Pressable style={styles.pricing} onPress={() => setChecked('two')}>
+        <Pressable style={styles.pricing} onPress={() => setChecked2(!checked2)}>
           <Text style={styles.summaryText}>Sit sapien</Text>
           <View style={styles.ratings}>
             <Text style={styles.pricingText}>
               $2.00
             </Text>
             <RadioButton
-              value="two"
+              value="second"
               color="#EA4335"
-              status={checked === 'two' ? 'checked' : 'unchecked'}
-              onPress={() => setChecked('two')}
+              status={checked2 ? 'checked' : 'unchecked'}
+              onPress={() => setChecked2(!checked2)}
             />
           </View>
 
         </Pressable>
-        <Pressable style={styles.pricing} onPress={() => setChecked('three')}>
+        <Pressable style={styles.pricing} onPress={() => setChecked3(!checked3)}>
           <Text style={styles.summaryText}>Cursus mauris</Text>
           <View style={styles.ratings}>
             <Text style={styles.pricingText}>
               $3.25
             </Text>
             <RadioButton
-              value="three"
+              value="third"
               color="#EA4335"
-              status={checked === 'three' ? 'checked' : 'unchecked'}
-              onPress={() => setChecked('three')}
+              status={checked3 ? 'checked' : 'unchecked'}
+              onPress={() => setChecked3(!checked3)}
             />
           </View>
 
         </Pressable>
-        <Pressable style={styles.pricing} onPress={() => setChecked('four')}>
+        <Pressable style={styles.pricing} onPress={() => setChecked4(!checked4)}>
           <Text style={styles.summaryText}>Augue dolor.</Text>
           <View style={styles.ratings}>
             <Text style={styles.pricingText}>
               $1.25
             </Text>
             <RadioButton
-              value="four"
+              value="fourth"
               color="#EA4335"
-              status={checked === 'four' ? 'checked' : 'unchecked'}
-              onPress={() => setChecked('four')}
+              status={checked4 ? 'checked' : 'unchecked'}
+              onPress={() => setChecked4(!checked4)}
             />
           </View>
 
@@ -157,7 +160,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     alignItems: "flex-end",
     justifyContent: "flex-start",
-    height: 310,
+    height: 330,
     padding: 30
   },
   logo: {
@@ -275,7 +278,8 @@ const styles = StyleSheet.create({
   },
   fnt12: {
     fontSize: 12,
-    marginLeft: 5
+    marginLeft: 5,
+    color:"#7E7E7E"
   },
   bold: {
     fontWeight: "bold"

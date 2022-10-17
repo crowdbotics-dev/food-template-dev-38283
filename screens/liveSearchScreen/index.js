@@ -1,15 +1,19 @@
 import React from "react";
 import { Text, StyleSheet, View, Image, TouchableHighlight } from "react-native";
-const mapScreen = () => {
+const LiveSearchScreen = () => {
 
 
 
   return (
     <View style={[styles.container]}>
       <Image
-        source={require("../../assets/mapImg.png")}
+        source={require("./assets/mapImg.png")}
         style={styles.blurImageStyle}
       />
+       <Image
+                source={require("./assets/buttonsImg.png")}
+                style={styles.mapButtons}
+            />
       <View style={styles.cardContainer}>
         <View style={styles.pricingContainer}>
           <View style={styles.pricing}>
@@ -132,9 +136,10 @@ const styles = StyleSheet.create({
   subLocationText: { fontSize: 12, color: "#7C7C7C", marginTop: 3 },
   eta:{ fontSize: 18, color: "#2A2B2E" },
   progressImageStyle: { height: 13, width: 350, resizeMode: "contain", alignSelf: "center", marginBottom: 15, marginTop: 5 },
+  mapButtons:{height: 300, width: 300, resizeMode: "contain", position: 'absolute', alignSelf: "center", top: 10,},
 });
 
-export default mapScreen;
+export default LiveSearchScreen;
 
 
 const Button = (props) => {

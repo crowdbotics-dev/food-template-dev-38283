@@ -426,7 +426,7 @@ import { Image, StyleSheet, TouchableHighlight } from "react-native";
 export const Signup = ({navigation}) => {
   const [checked, setChecked] = useState(true);
   const pressed = () => {
-    navigation.navigate("homeScreen")
+    navigation.navigate("chatScreen")
   };
   
   return (
@@ -452,7 +452,7 @@ export const Signup = ({navigation}) => {
           <View style={styles.rememberContainer}>
           <Checkbox color={"#000"}  status={checked ? 'checked' : 'unchecked'}
                 onPress={() => setChecked(!checked)}/>
-            <Text>Remember me</Text>
+            <Text style={{paddingLeft: 5}}>Remember me</Text>
           </View>
           <Text>Forget Password?</Text>
         </View>
@@ -468,6 +468,7 @@ export const Signup = ({navigation}) => {
         <View style={styles.imageContainer}>
           <View style={styles.iconContainer}>
             <Image
+              // @ts-ignore
               source={require("../../../assets/googleIcon.png")}
               style={styles.icon}
             />
@@ -475,6 +476,7 @@ export const Signup = ({navigation}) => {
           </View>
           <View style={styles.iconContainer}>
             <Image
+              // @ts-ignore
               source={require("../../../assets/fbIcon.png")}
               style={styles.icon}
             />
@@ -580,16 +582,18 @@ const styles = StyleSheet.create({
   },
   text: { color: "#888888", lineHeight: 20 },
   forgetContainer: {
-    paddingRight: 10,
+    paddingRight: 5,
     marginVertical: 15,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    marginLeft: -8
   },
   rememberContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start"
+    justifyContent: "flex-start",
+    
   },
   socialText:{color: "#222222"}
 });
