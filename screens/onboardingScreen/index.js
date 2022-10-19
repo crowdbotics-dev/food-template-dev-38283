@@ -54,11 +54,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
         position: "absolute",
         bottom: -100,
-        left: 150
+        alignSelf: "center"
     },
     icon: {
         width: 71,
-        height: 78
+        height: 78,
+
     },
     mainHeading: {
         fontSize: 24,

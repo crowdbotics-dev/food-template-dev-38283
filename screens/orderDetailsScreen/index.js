@@ -4,7 +4,7 @@ import { Text, StyleSheet, View, TouchableHighlight, Image, ScrollView } from "r
 const OrderDetailScreen = () => {
 
   return (
-    <ScrollView style={[styles.container]}>
+    <ScrollView style={[styles.container]} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
         <Text style={styles.heading}>Order details</Text>
         <Text style={styles.inputText}>Mon, 29 Sep</Text>
@@ -173,7 +173,6 @@ const styles = StyleSheet.create({
   subLocationText: { fontSize: 12, color: "#7C7C7C", marginTop: 3 },
   cardContainer: {
     backgroundColor: "#F9F9F9",
-    paddingHorizontal: 15,
   }
 });
 
@@ -197,7 +196,7 @@ const Button = (props) => {
 
 const btnStyles = StyleSheet.create({
   mainContainer: {
-    marginBottom: 20, marginTop: 30, width: '90%', justifyContent: "center",
+    marginBottom: 20, marginTop: 30, width: '80%', justifyContent: "center",
     alignSelf: "center"
   },
   button: {
@@ -240,7 +239,7 @@ const DetailsCard = () => {
 const detailsCardStyles = StyleSheet.create({
   detailsCard: {
     height: 106,
-    width: 360,
+    width: "90%",
     marginTop: 20,
     borderRadius: 10,
     backgroundColor: '#FFF',
@@ -249,7 +248,8 @@ const detailsCardStyles = StyleSheet.create({
     shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
-    borderWidth: 1, borderColor: "#979797"
+    borderWidth: 1, borderColor: "#979797",
+    alignSelf: "center"
   },
   pricing: {
     marginHorizontal: 20,

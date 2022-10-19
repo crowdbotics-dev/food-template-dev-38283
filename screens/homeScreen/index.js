@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   View,
@@ -6,11 +6,14 @@ import {
   Image,
   TextInput,
   ScrollView,
-  FlatList
+  FlatList,
+  Dimensions,
+  Pressable
 } from "react-native";
 
 
 const Home = ({ navigation }) => {
+  const [screenWidth, setScreenWidth] = useState(null)
   const data = [
     {
       id: 1,
@@ -29,6 +32,13 @@ const Home = ({ navigation }) => {
       image: "https://raw.githubusercontent.com/crowdbotics/modules/master/modules/screen-explore-list/assets/eventImage-lg.png"
     },
   ]
+
+  useEffect(() => {
+    const windowWidth = Dimensions.get('window').width;
+    setScreenWidth(windowWidth);
+  }, [])
+  
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
@@ -50,12 +60,12 @@ const Home = ({ navigation }) => {
           </View>
           <View style={styles.imageContainer}>
             <View>
-              <View style={styles.iconContainer}>
+              <Pressable style={styles.iconContainer} >
                 <Image
                   source={require("./assets/blackheart.png")}
                   style={styles.icon}
                 />
-              </View>
+              </Pressable>
               <Text style={styles.iconText}>Favorite</Text>
             </View>
             <View>
@@ -93,7 +103,7 @@ const Home = ({ navigation }) => {
 
           <FlatList
             data={data}
-            renderItem={({ item }) => <ExploreItem event={item} />}
+            renderItem={({ item }) => <ExploreItem event={item} width={screenWidth}/>}
             keyExtractor={item => item.id.toString()}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
@@ -120,7 +130,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "#F2F2F2",
   },
   searchContainer: {},
-  scrollView:{marginBottom: 60},
+  scrollView: { marginBottom: 60 },
   inputText: {
     flexDirection: "row",
     alignItems: "center",
@@ -176,8 +186,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    height: 70,
-    width: 70,
+    height: 65,
+    width: 65,
     borderRadius: 6,
     backgroundColor: "#FFF",
     shadowColor: "rgba(0,0,0,0.5)",
@@ -190,11 +200,11 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   icon: {
-    height: 38,
-    width: 38,
+    height: 35,
+    width: 35,
     resizeMode: "contain",
   },
-  iconCheap: { resizeMode: "contain", height: 32, width: 32 },
+  iconCheap: { resizeMode: "contain", height: 29, width: 29 },
   promoText: {
     fontSize: 24, fontWeight: "500"
   },
@@ -244,9 +254,9 @@ const textStyles = StyleSheet.create({
 });
 
 
-const ExploreItem = ({ event }) => {
+const ExploreItem = ({ event, width}) => {
   return (
-    <View style={exploreItemStyles.container}>
+    <View style={[exploreItemStyles.container, {width : width-50}]}>
       <View style={exploreItemStyles.header}>
         <View style={exploreItemStyles.heading}>
           <Text style={exploreItemStyles.text}>Discover</Text>
@@ -276,7 +286,7 @@ const ExploreItem = ({ event }) => {
 
 const exploreItemStyles = StyleSheet.create({
   container: {
-    width: 340,
+    width: 310,
     height: 220,
     marginHorizontal: 5,
     elevation: 1,

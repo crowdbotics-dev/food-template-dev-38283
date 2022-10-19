@@ -426,7 +426,7 @@ import { Image, StyleSheet, TouchableHighlight } from "react-native";
 export const Signup = ({navigation}) => {
   const [checked, setChecked] = useState(true);
   const pressed = () => {
-    navigation.navigate("chatScreen")
+    navigation.navigate("homeScreen")
   };
   
   return (
@@ -526,7 +526,7 @@ const styles = StyleSheet.create({
   },
   loginContainer: {
     marginTop: 10,
-    width: "80%",
+    width: "90%",
     alignSelf: "center"
   },
   orContainer: {
@@ -561,7 +561,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     height: 40,
-    width: 150,
+    width: "47%",
     padding: 10,
     borderRadius: 6,
     backgroundColor: "#F7F7F7"
