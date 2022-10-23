@@ -7,7 +7,8 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
-  Platform
+  Platform,
+  Pressable
 } from "react-native"
 import { Checkbox } from "react-native-paper"
 import {
@@ -146,9 +147,9 @@ const onGoogleConnect = async (dispatch, navigation) => {
     // @ts-ignore
     dispatch(googleLogin({ access_token: tokens.accessToken }))
       .then(unwrapResult)
-      .then(res => {
+      .then( async res => {
         if (res.key) {
-          // setItem('token', res.key)
+          await setItem('token', res.key)
           navigation.navigate(HOME_SCREEN_NAME);
         }
       });
@@ -421,13 +422,72 @@ export const SignInTab = ({ navigation }) => {
 
 
 import { Image, StyleSheet, TouchableHighlight } from "react-native";
-
+import {setItem} from "../../../store"
 
 export const Signup = ({navigation}) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [validationError, setValidationError] = useState({
+    email: "",
+    password: ""
+  });
+
   const [checked, setChecked] = useState(true);
   const pressed = () => {
     navigation.navigate("homeScreen")
   };
+
+
+  // @ts-ignore
+  const { api } = useSelector(state => state.Login);
+  const dispatch = useDispatch();
+
+  const onSigninPress = async () => {
+    if (!validateEmail.test(email)) {
+      return setValidationError({
+        email: "Please enter a valid email address.",
+        password: ""
+      });
+    }
+
+    if (!password) {
+      return setValidationError({
+        email: "",
+        password: "Please enter a valid password"
+      });
+    }
+
+    // @ts-ignore
+    dispatch(loginRequest({ username: email, password }))
+      .then(unwrapResult)
+      .then(async res => {
+        if (res.token) {
+          await setItem('token', res.token)
+          setEmail("");
+          setPassword("")
+          navigation.navigate(HOME_SCREEN_NAME);
+        }
+      })
+      .catch(err => console.log(err.message));
+  };
+
+  const resetValidations = () => {
+    return setValidationError({
+      email: "",
+      password: ""
+    });
+  }
+
+  const handleInputEmail = (value) => {
+    setEmail(value)
+    resetValidations()
+  }
+
+  const handleInputPassword = (value) => {
+    setPassword(value)
+    resetValidations()
+  }
   
   return (
     <View style={styles.container}>
@@ -440,12 +500,17 @@ export const Signup = ({navigation}) => {
           <Text style={styles.mr10}>Email</Text>
           <Input
             placeholder='Email'
+            onChangeText={handleInputEmail}
+            errorText={validationError.email}
           />
         </View>
         <View>
           <Text style={styles.mr10}>Password</Text>
           <Input
             placeholder='Password'
+            onChangeText={handleInputPassword}
+            errorText={validationError.password}
+            secure={true}
           />
         </View>
         <View style={styles.forgetContainer}>
@@ -457,7 +522,7 @@ export const Signup = ({navigation}) => {
           <Text>Forget Password?</Text>
         </View>
         <View style={styles.loginContainer}>
-          <SignInButton onPress={pressed}>Log In</SignInButton>
+          <SignInButton onPress={onSigninPress}>Log In</SignInButton>
         </View>
         
         <View style={styles.orContainer}>
@@ -466,22 +531,22 @@ export const Signup = ({navigation}) => {
           <View style={styles.line} />
         </View>
         <View style={styles.imageContainer}>
-          <View style={styles.iconContainer}>
+          <Pressable style={styles.iconContainer} onPress={() => onGoogleConnect(dispatch)}>
             <Image
               // @ts-ignore
               source={require("../../../assets/googleIcon.png")}
               style={styles.icon}
             />
             <Text style={styles.socialText}>Google</Text>
-          </View>
-          <View style={styles.iconContainer}>
+          </Pressable>
+          <Pressable style={styles.iconContainer} onPress={() => onFacebookConnect(dispatch)}>
             <Image
               // @ts-ignore
               source={require("../../../assets/fbIcon.png")}
               style={styles.icon}
             />
              <Text style={styles.socialText}>Facebook</Text>
-          </View>
+          </Pressable>
         </View>
       </View>
       <View style={styles.footerContainer}>
@@ -634,8 +699,9 @@ const Input = (props) => {
         style={textStyles.input}
         placeholder={props.placeholder}
         value={props.value}
-        onChangeText={(num) => props.setValue(num)}
+        onChangeText={(num) => props.onChangeText(num)}
         placeholderTextColor='#000'
+        secureTextEntry={props.secure ? true : false}
         editable={props.editable !== false}
       />
       {props.errorText ? <Text style={textStyles.error}>{props.errorText}</Text> : null}

@@ -1,8 +1,40 @@
-import { View, Text, Image, StyleSheet, TextInput, ScrollView, Pressable } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, Image, StyleSheet, TextInput, ScrollView, Pressable, ImageBackground, TouchableOpacity } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { getProductsList } from "../../store";
+import { getProduct, getProducts, productAvailability } from '../../store/apis';
+import Loader from '../../components/Loader';
 
-const SearchScreen = () => {
+const SearchScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [selectedTab, setSelectedTab] = useState(0);
+  const [products, setProducts] = useState([]);
+  const [productsList, setProductsList] = useState([])
+  const [isLoading, setIsLoading] = useState(false);
+  const productList = useSelector((state) => state?.ecommerce.products);
+
+
+  const handleProducts = async () => {
+    setIsLoading(true)
+    const products = await getProducts();
+    var productList = [];
+    let i = 0;
+    while (i < products.length) {
+      const product = await getProduct(products[i].url);
+      const availability = await productAvailability(product.id);
+      product.availability_status = availability
+      productList.push(product);
+      i += 1;
+    }
+    setProductsList(productList);
+    setIsLoading(false);
+  }
+
+
+  useEffect(() => {
+    handleProducts();
+    dispatch(getProductsList()).then((res) => { }).catch((err) => console.log("Error: ", err))
+  }, [])
 
 
   return (
@@ -75,157 +107,165 @@ const SearchScreen = () => {
               // @ts-ignore
               "./assets/filter.png")} style={styles.filter} />
           </View>
+          {
+            isLoading ? <Loader></Loader> :
+              <View>
+                <View style={styles.centerBox}>
+                  <TouchableOpacity onPress={() => navigation.navigate("productScreen", { product: productsList[0] })}>
+                    <ImageBackground source={{ uri: productsList[0]?.images[0]?.original }} style={styles.box}>
+                      <View style={styles.courseTop}>
+                        <Pressable style={styles.heartIconContainer}>
+                          <Image
+                            // @ts-ignore
+                            source={require("./assets/heartIcon.png")}
+                            style={styles.heartIcon}
+                          />
+                        </Pressable>
+                        <Text style={styles.rateLabel}>4.7</Text>
+                      </View>
+                      <View style={styles.imageBox}>
+                        <Image source={require(
+                          // @ts-ignore
+                          "./assets/edit.png")} style={styles.editImg} />
+                      </View>
+                    </ImageBackground>
+                    <View style={styles.boxBottom}>
 
-          <View style={styles.centerBox}>
-            <View>
-              <View style={styles.box}>
-                <View style={styles.courseTop}>
-                  <Pressable style={styles.heartIconContainer}>
-                    <Image
-                      // @ts-ignore
-                      source={require("./assets/heartIcon.png")}
-                      style={styles.heartIcon}
-                    />
-                  </Pressable>
-                  <Text style={styles.rateLabel}>4.7</Text>
-                </View>
-                <View style={styles.imageBox}>
-                  <Image source={require(
-                    // @ts-ignore
-                    "./assets/edit.png")} style={styles.editImg} />
-                </View>
-              </View>
-              <View style={styles.boxBottom}>
+                      <View style={styles.nameContainer}>
+                        <Text style={styles.courseName}>{productsList[0]?.title}</Text>
+                        <View style={styles.nameContainer}>
+                          <Text style={{ fontSize: 8, color: "#7C7C7C" }}>1.3mi </Text>
+                          <Image source={require(
+                            // @ts-ignore
+                            "./assets/loc.png")} style={styles.loc} />
+                        </View>
+                      </View>
 
-                <View style={styles.nameContainer}>
-                  <Text style={styles.courseName}>Food name</Text>
-                  <View style={styles.nameContainer}>
-                  <Text style={{fontSize: 8, color: "#7C7C7C"}}>1.3mi </Text>
-                    <Image source={require(
-                      // @ts-ignore
-                      "./assets/loc.png")} style={styles.loc} />
-                  </View>
-                </View>
+                      <View style={styles.cardsContainer}>
+                        <Image source={require(
+                          // @ts-ignore
+                          "./assets/cards.png")} style={styles.cards} />
+                        <Text style={styles.count}>+5 comments</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
 
-                <View style={styles.cardsContainer}>
-                  <Image source={require(
-                    // @ts-ignore
-                    "./assets/cards.png")} style={styles.cards} />
-                  <Text style={styles.count}>+5 comments</Text>
+                  <TouchableOpacity onPress={() => navigation.navigate("productScreen", { product: productsList[1] })}>
+                    <ImageBackground source={{ uri: productsList[1]?.images[1]?.original }} style={styles.box}>
+                      <View style={styles.courseTop}>
+                        <Pressable style={styles.heartIconContainer}>
+                          <Image
+                            // @ts-ignore
+                            source={require("./assets/heartIcon.png")}
+                            style={styles.heartIcon}
+                          />
+                        </Pressable>
+                        <Text style={styles.rateLabel}>4.7</Text>
+                      </View>
+                      <View style={styles.imageBox}>
+                        <Image source={require(
+                          // @ts-ignore
+                          "./assets/edit.png")} style={styles.editImg} />
+                      </View>
+                    </ImageBackground>
+                    <View style={[styles.boxBottom, styles.ml10]}>
+                      <View style={styles.nameContainer}>
+                        <Text style={styles.courseName}>{productsList[1]?.title}</Text>
+                        <View style={styles.nameContainer}>
+                          <Text style={{ fontSize: 8, color: "#7C7C7C" }}>1.3mi </Text>
+                          <Image source={require(
+                            // @ts-ignore
+                            "./assets/loc.png")} style={styles.loc} />
+                        </View>
+                      </View>
+                      <View style={styles.cardsContainer}>
+                        <Image source={require(
+                          // @ts-ignore
+                          "./assets/cards.png")} style={styles.cards} />
+                        <Text style={styles.count}>+5 Comments</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.centerBox}>
+                <TouchableOpacity onPress={() => navigation.navigate("productScreen", { product: productsList[2] })}>
+                  
+                    <ImageBackground source={{ uri: productsList[2]?.images[2]?.original }} style={styles.box}>
+                      <View style={styles.courseTop}>
+                        <Pressable style={styles.heartIconContainer}>
+                          <Image
+                            // @ts-ignore
+                            source={require("./assets/heartIcon.png")}
+                            style={styles.heartIcon}
+                          />
+                        </Pressable>
+                        <Text style={styles.rateLabel}>4.7</Text>
+                      </View>
+                      <View style={styles.imageBox}>
+                        <Image source={require(
+                          // @ts-ignore
+                          "./assets/edit.png")} style={styles.editImg} />
+                      </View>
+                    </ImageBackground>
+                    <View style={styles.boxBottom}>
+                      <View style={styles.nameContainer}>
+                        <Text style={styles.courseName}>{productsList[2]?.title}</Text>
+                        <View style={styles.nameContainer}>
+                          <Text style={{ fontSize: 8, color: "#7C7C7C" }}>1.3mi </Text>
+                          <Image source={require(
+                            // @ts-ignore
+                            "./assets/loc.png")} style={styles.loc} />
+                        </View>
+                      </View>
+                      <View style={styles.cardsContainer}>
+                        <Image source={require(
+                          // @ts-ignore
+                          "./assets/cards.png")} style={styles.cards} />
+                        <Text style={styles.count}>+5 Comments</Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => navigation.navigate("productScreen", { product: productsList[3] })}>
+
+                    <ImageBackground source={{ uri: productsList[3]?.images[3]?.original }} style={styles.box}>
+                      <View style={styles.courseTop}>
+                        <Pressable style={styles.heartIconContainer}>
+                          <Image
+                            // @ts-ignore
+                            source={require("./assets/heartIcon.png")}
+                            style={styles.heartIcon}
+                          />
+                        </Pressable>
+                        <Text style={styles.rateLabel}>4.7</Text>
+                      </View>
+                      <View style={styles.imageBox}>
+                        <Image source={require(
+                          // @ts-ignore
+                          "./assets/edit.png")} style={styles.editImg} />
+                      </View>
+                    </ImageBackground>
+                    <View style={[styles.boxBottom, styles.ml10]}>
+                      <View style={styles.nameContainer}>
+                        <Text style={styles.courseName}>{productsList[3]?.title}</Text>
+                        <View style={styles.nameContainer}>
+                          <Text style={{ fontSize: 8, color: "#7C7C7C" }}>1.3mi </Text>
+                          <Image source={require(
+                            // @ts-ignore
+                            "./assets/loc.png")} style={styles.loc} />
+                        </View>
+                      </View>
+                      <View style={styles.cardsContainer}>
+                        <Image source={require(
+                          // @ts-ignore
+                          "./assets/cards.png")} style={styles.cards} />
+                        <Text style={styles.count}>+5 Comments</Text>
+                      </View>
+                    </View>
+                 </TouchableOpacity>
                 </View>
               </View>
-            </View>
-            <View>
-              <View style={[styles.box, styles.color]}>
-                <View style={styles.courseTop}>
-                  <Pressable style={styles.heartIconContainer}>
-                    <Image
-                      // @ts-ignore
-                      source={require("./assets/heartIcon.png")}
-                      style={styles.heartIcon}
-                    />
-                  </Pressable>
-                  <Text style={styles.rateLabel}>4.7</Text>
-                </View>
-                <View style={styles.imageBox}>
-                  <Image source={require(
-                    // @ts-ignore
-                    "./assets/edit.png")} style={styles.editImg} />
-                </View>
-              </View>
-              <View style={[styles.boxBottom, styles.ml10]}>
-              <View style={styles.nameContainer}>
-                  <Text style={styles.courseName}>Food name</Text>
-                  <View style={styles.nameContainer}>
-                  <Text style={{fontSize: 8, color: "#7C7C7C"}}>1.3mi </Text>
-                    <Image source={require(
-                      // @ts-ignore
-                      "./assets/loc.png")} style={styles.loc} />
-                  </View>
-                </View>
-                <View style={styles.cardsContainer}>
-                  <Image source={require(
-                    // @ts-ignore
-                    "./assets/cards.png")} style={styles.cards} />
-                  <Text style={styles.count}>+5 Comments</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-          <View style={styles.centerBox}>
-            <View>
-              <View style={styles.box}>
-                <View style={styles.courseTop}>
-                  <Pressable style={styles.heartIconContainer}>
-                    <Image
-                      // @ts-ignore
-                      source={require("./assets/heartIcon.png")}
-                      style={styles.heartIcon}
-                    />
-                  </Pressable>
-                  <Text style={styles.rateLabel}>4.7</Text>
-                </View>
-                <View style={styles.imageBox}>
-                  <Image source={require(
-                    // @ts-ignore
-                    "./assets/edit.png")} style={styles.editImg} />
-                </View>
-              </View>
-              <View style={styles.boxBottom}>
-              <View style={styles.nameContainer}>
-                  <Text style={styles.courseName}>Food name</Text>
-                  <View style={styles.nameContainer}>
-                  <Text style={{fontSize: 8, color: "#7C7C7C"}}>1.3mi </Text>
-                    <Image source={require(
-                      // @ts-ignore
-                      "./assets/loc.png")} style={styles.loc} />
-                  </View>
-                </View>
-                <View style={styles.cardsContainer}>
-                  <Image source={require(
-                    // @ts-ignore
-                    "./assets/cards.png")} style={styles.cards} />
-                  <Text style={styles.count}>+5 Comments</Text>
-                </View>
-              </View>
-            </View>
-            <View>
-              <View style={[styles.box, styles.color]}>
-                <View style={styles.courseTop}>
-                  <Pressable style={styles.heartIconContainer}>
-                    <Image
-                      // @ts-ignore
-                      source={require("./assets/heartIcon.png")}
-                      style={styles.heartIcon}
-                    />
-                  </Pressable>
-                  <Text style={styles.rateLabel}>4.7</Text>
-                </View>
-                <View style={styles.imageBox}>
-                  <Image source={require(
-                    // @ts-ignore
-                    "./assets/edit.png")} style={styles.editImg} />
-                </View>
-              </View>
-              <View style={[styles.boxBottom, styles.ml10]}>
-              <View style={styles.nameContainer}>
-                  <Text style={styles.courseName}>Food name</Text>
-                  <View style={styles.nameContainer}>
-                  <Text style={{fontSize: 8, color: "#7C7C7C"}}>1.3mi </Text>
-                    <Image source={require(
-                      // @ts-ignore
-                      "./assets/loc.png")} style={styles.loc} />
-                  </View>
-                </View>
-                <View style={styles.cardsContainer}>
-                  <Image source={require(
-                    // @ts-ignore
-                    "./assets/cards.png")} style={styles.cards} />
-                  <Text style={styles.count}>+5 Comments</Text>
-                </View>
-              </View>
-            </View>
-          </View>
+          }
+
         </View>
       </ScrollView>
       <View style={styles.footer}>
@@ -291,7 +331,7 @@ const styles = StyleSheet.create({
     marginVertical: 10
   },
   title: { fontSize: 24, fontWeight: "bold", marginLeft: 20, marginBottom: 20, marginTop: 10 },
-  box: { height: 167, width: 145, backgroundColor: "#fdf1d6", borderRadius: 10, alignItems: "center", justifyContent: "center" },
+  box: { height: 167, width: 145, borderRadius: 10, alignItems: "center", justifyContent: "center" },
   imageBox: { height: 140, alignItems: "center", justifyContent: "center" },
   editImg: { marginBottom: 15, height: 32, width: 32, resizeMode: "contain" },
   centerBox: { flexDirection: "row", justifyContent: "space-around", alignItems: "center", paddingHorizontal: 10 },
@@ -350,10 +390,12 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   scrollView: { marginBottom: 60 },
-  nameContainer:{ flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "space-between"},
-  loc:{height: 10, width: 10, resizeMode: "contain"}
+  nameContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  loc: { height: 10, width: 10, resizeMode: "contain" }
 });
 
 

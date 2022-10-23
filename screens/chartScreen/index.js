@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Text, StyleSheet, View, Image, ScrollView, TouchableHighlight, Pressable } from "react-native";
+import { Text, StyleSheet, View, Image, ScrollView, TouchableHighlight, Pressable, Alert } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
-const ChartScreen = () => {
+import { useDispatch, useSelector } from "react-redux";
+import { getBasket } from "../../store";
+const ChartScreen = ({navigation}) => {
   const [quantity, setQuantity] = useState(1);
-  const [productList, setProductList] = useState([]);
+  const [cartProducts, setCartProducts] = useState([]);
+  const [basketData, setBasketData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+
   const increment = () => {
     setQuantity(quantity + 1);
   };
@@ -15,47 +21,38 @@ const ChartScreen = () => {
     }
   };
 
-  useEffect(() => {
-    setProductList([
-      {
-        id: 1,
-        name: "Product name",
-        price: 12,
-        discountedPrice: "Gravida eget augue viverra.",
-        deliveryType: "Free delivery",
-        rating: 4.8,
-        image: require("./assets/productImage.png")
-      },
-      {
-        id: 2,
-        name: "Product name",
-        price: 12,
-        discountedPrice: "Gravida eget augue viverra.",
-        deliveryType: "Free delivery",
-        rating: 4.8,
-        image: require("./assets/productImage.png")
-      },
-      {
-        id: 3,
-        name: "Product name",
-        price: 12,
-        discountedPrice: "Gravida eget augue viverra.",
-        deliveryType: "Free delivery",
-        rating: 4.8,
-        image: require("./assets/productImage.png")
-      },
-      {
-        id: 4,
-        name: "Product name",
-        price: 12,
-        discountedPrice: "Gravida eget augue viverra.",
-        deliveryType: "Free delivery",
-        rating: 4.8,
-        image: require("./assets/productImage.png")
-      },
-    ]);
-  }, []);
 
+
+  // @ts-ignore
+  const myBasket = useSelector(state => state?.ecommerce?.myBasket);
+  useEffect(() => {
+    setCartProducts(myBasket[0]?.line_details)
+    setBasketData(myBasket[0]);
+  }, [myBasket])
+
+
+  const handleGetBasket = async () => {
+    setIsLoading(true)
+    await dispatch(getBasket()).then(basket => {
+      setIsLoading(false)
+    }).catch(err => { console.log("ERROR: ", err); setIsLoading(false) });
+  }
+
+  useEffect(() => {
+    handleGetBasket();
+  }, [])
+
+  const handleCheckout = () => {
+    
+    if ( cartProducts === undefined) {
+      Alert.alert("No product in Basket!", "Please add at least one product in basket before checkout")
+    } else if (cartProducts.length === 0){
+      Alert.alert("No product in Basket!", "Please add at least one product in basket before checkout")
+    } else {
+      navigation.navigate('checkoutScreen', { basketData });
+    }
+
+  }
   const leftSwipe = (id) => (
     <Pressable style={styles.leftSwipe} onPress={() => console.log("Deleted Item: ", id)}>
       <Image source={require("./assets/delete.png")} style={styles.delete} />
@@ -71,16 +68,16 @@ const ChartScreen = () => {
           <Text style={styles.promoText}>Order details</Text>
           <Image source={require("./assets/basket.png")} style={styles.filter} />
         </View>
-        {productList && productList.map((item, index) =>
-          <Swipeable renderRightActions={() =>leftSwipe(item.id)} key={index}>
+        {cartProducts && cartProducts.map((item, index) =>
+          <Swipeable renderRightActions={() => leftSwipe(item.id)} key={index}>
             <View style={styles.productContainer} >
               <View>
-                <Image source={item.image} style={styles.productImage} />
+                <Image source={{ uri: "https://cdnimg.webstaurantstore.com/uploads/blog/2019/3/blog-types-pizza_in-blog-8.jpg" || item?.images[0].original }} style={styles.productImage} />
               </View>
               <View style={styles.productDetails}>
-                <Text style={styles.productName}>{item.name}</Text>
-                <Text style={styles.pricingText}>
-                  {item.discountedPrice}{" "}
+                <Text style={styles.productName}>{item?.product?.title}</Text>
+                <Text style={styles.pricingText} numberOfLines={1}>
+                  {item?.product?.description}{" "}
                 </Text>
                 <View style={styles.flexRow}>
                   <View style={styles.greenCircle}>
@@ -90,7 +87,7 @@ const ChartScreen = () => {
                 </View>
               </View>
               <View style={styles.buttons}>
-                <Text style={styles.priceText}>${item.price}</Text>
+                <Text style={styles.priceText}>${item?.price_incl_tax}</Text>
                 <View style={styles.counter}>
                   <Pressable
                     style={[styles.counterBtn, styles.decrement]}
@@ -100,7 +97,7 @@ const ChartScreen = () => {
                       style={styles.icon}
                     />
                   </Pressable>
-                  <Text style={styles.counterText}>{quantity}</Text>
+                  <Text style={styles.counterText}>{item?.quantity}</Text>
                   <Pressable
                     style={[styles.counterBtn, styles.increment]}
                     onPress={() => increment()}>
@@ -146,13 +143,13 @@ const ChartScreen = () => {
           <View style={styles.pricing}>
             <Text style={styles.subtotalText}>Subtotal:</Text>
             <Text style={styles.subtotalText}>
-              $18
+              {basketData?.total_excl_tax_excl_discounts}{" "}{basketData?.currency}
             </Text>
           </View>
           <View style={styles.pricing}>
             <Text style={styles.deliveryText}>Fee & delivery</Text>
             <Text style={styles.subtotalPrice}>
-              $0
+              {basketData?.delivery_fee}{" "}{basketData?.currency}
             </Text>
           </View>
         </View>
@@ -160,10 +157,10 @@ const ChartScreen = () => {
         <View style={styles.total}>
           <Text style={styles.totalText}>Total</Text>
           <Text style={styles.totalPrice}>
-            $18
+            {basketData?.total}{" "}{basketData?.currency}
           </Text>
         </View>
-        <Button buttonText="Checkout" />
+        <Button buttonText="Checkout" onPress={() =>handleCheckout()}/>
       </View>
     </View>
   );
