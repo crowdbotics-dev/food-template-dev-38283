@@ -23,7 +23,7 @@ from google.cloud import secretmanager
 from google.auth.exceptions import DefaultCredentialsError
 from google.api_core.exceptions import PermissionDenied
 from modules.manifest import get_modules
-
+from oscar import *
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -50,7 +50,7 @@ except (DefaultCredentialsError, PermissionDenied):
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env.str("SECRET_KEY")
+SECRET_KEY = env.str("SECRET_KEY","123456789")
 
 ALLOWED_HOSTS = env.list("HOST", default=["*"])
 SITE_ID = 1
@@ -73,6 +73,7 @@ INSTALLED_APPS = [
 LOCAL_APPS = [
     'home',
     'users.apps.UsersConfig',
+    'consumer.apps.ConsumerConfig',
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
@@ -87,10 +88,55 @@ THIRD_PARTY_APPS = [
     'django_extensions',
     'drf_yasg',
     'storages',
+    'allauth.socialaccount.providers.facebook',  # add this line here
+    'allauth.socialaccount.providers.apple',
+    'oscarapicheckout',
 ]
+
+OSCAR_APPS = [
+    # 'django.contrib.flatpages',
+    # 'oscar.config.Shop',
+    # 'oscar.apps.catalogue.reviews.apps.CatalogueReviewsConfig',
+    # 'oscar.apps.search.apps.SearchConfig',
+    # 'oscar.apps.dashboard.apps.DashboardConfig',
+    # 'oscar.apps.dashboard.reports.apps.ReportsDashboardConfig',
+    # 'oscar.apps.dashboard.users.apps.UsersDashboardConfig',
+    # 'oscar.apps.dashboard.orders.apps.OrdersDashboardConfig',
+    # 'oscar.apps.dashboard.catalogue.apps.CatalogueDashboardConfig',
+    # 'oscar.apps.dashboard.offers.apps.OffersDashboardConfig',
+    # 'oscar.apps.dashboard.partners.apps.PartnersDashboardConfig',
+    # 'oscar.apps.dashboard.pages.apps.PagesDashboardConfig',
+    # 'oscar.apps.dashboard.ranges.apps.RangesDashboardConfig',
+    # 'oscar.apps.dashboard.reviews.apps.ReviewsDashboardConfig',
+    # 'oscar.apps.dashboard.vouchers.apps.VouchersDashboardConfig',
+    # 'oscar.apps.dashboard.communications.apps.CommunicationsDashboardConfig',
+    # 'oscar.apps.dashboard.shipping.apps.ShippingDashboardConfig',
+
+'django.contrib.flatpages',
+    'oscar.config.Shop',
+    'oscar.apps.catalogue.reviews.apps.CatalogueReviewsConfig',
+    'oscar.apps.search.apps.SearchConfig',
+    'oscar.apps.dashboard.offers.apps.OffersDashboardConfig',
+    'oscar.apps.dashboard.pages.apps.PagesDashboardConfig',
+    'oscar.apps.dashboard.ranges.apps.RangesDashboardConfig',
+    'oscar.apps.dashboard.reviews.apps.ReviewsDashboardConfig',
+    'oscar.apps.dashboard.vouchers.apps.VouchersDashboardConfig',
+    'oscar.apps.dashboard.communications.apps.CommunicationsDashboardConfig',
+    'oscar.apps.dashboard.shipping.apps.ShippingDashboardConfig',
+    # 3rd-party apps that oscar depends on
+    'widget_tweaks',
+    'haystack',
+    'treebeard',
+    'sorl.thumbnail',  # Default thumbnail backend, can be replaced
+    'django_tables2'
+
+]
+
+OSCARAPI_OVERRIDE_MODULES = ["modules.ecommerce.api_extensions"]
+
 MODULES_APPS = get_modules()
 
-INSTALLED_APPS += LOCAL_APPS + THIRD_PARTY_APPS + MODULES_APPS
+INSTALLED_APPS += LOCAL_APPS + THIRD_PARTY_APPS + MODULES_APPS + OSCAR_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -100,6 +146,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # oscar apps middleware
+    'oscar.apps.basket.middleware.BasketMiddleware',
+'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
 
 ROOT_URLCONF = 'food_template_dev_38283.urls'
@@ -115,6 +164,11 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # Oscar specific context processors
+                'oscar.apps.search.context_processors.search_form',
+                'oscar.apps.checkout.context_processors.checkout',
+                'oscar.apps.communication.notifications.context_processors.notifications',
+                'oscar.core.context_processors.metadata',
             ],
         },
     },
@@ -126,10 +180,21 @@ WSGI_APPLICATION = 'food_template_dev_38283.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ecomerce',
+        'USER': 'ecomerce',
+        'PASSWORD': 'ecomerce',
+        'HOST': 'localhost',
+        'PORT': 5432,
     }
 }
 
@@ -177,7 +242,9 @@ MIDDLEWARE += ['whitenoise.middleware.WhiteNoiseMiddleware']
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend'
+    'allauth.account.auth_backends.AuthenticationBackend',
+    'oscar.apps.customer.auth_backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
@@ -273,3 +340,52 @@ if GS_BUCKET_NAME:
     DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
     STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
     GS_DEFAULT_ACL = "publicRead"
+
+# Oscar Search Backend
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
+    },
+}
+
+from oscar.defaults import *
+
+OSCARAPI_EXPOSE_USER_DETAILS = True
+OSCARAPI_USERADDRESS_FIELDS = (
+    "id",
+    "title",
+    "first_name",
+    "last_name",
+    "line1",
+    "line2",
+    "line3",
+    "line4",
+    "state",
+    "postcode",
+    "search_text",
+    "phone_number",
+    "notes",
+    "is_default_for_shipping",
+    "is_default_for_billing",
+    "country",
+    "url",
+    'lat',
+    'lng'
+)
+ORDER_STATUS_PAYMENT_DECLINED = 'Payment Declined'
+ORDER_STATUS_AUTHORIZED = 'Order Placed'
+ORDER_BEING_PREPARED = 'Order Being Prepared'
+ORDER_WAITING_PICKUP = 'Waiting For Pickup'
+ORDER_ON_THE_WAY = 'On The Way'
+ORDER_DELIVERED = 'Delivered'
+ORDER_STATUS_CANCELED = 'Cancelled'
+ORDER_STATUS_CANCELED_USER = 'Cancelled by User'
+
+OLD_PASSWORD_FIELD_ENABLED = True
+# OSCAR_SHOP_NAME = 'Drone Express'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
