@@ -8,26 +8,31 @@ import {
     Pressable,
     ScrollView
 } from "react-native";
+import { useSelector } from "react-redux";
 
 const AccountScreen = () => {
     const [user, setUser] = useState({});
     const [accountNumber, setAccountNumber] = useState("");
     const [confirmAccountNumber, setConfirmAccountNumber] = useState("");
     const [routingNumber, setRoutingNumber] = useState("");
+
+    const userInfo = useSelector(state => state?.ecommerce?.user);
+
+
     useEffect(() => {
-        setUser({
-            name: "Username",
-            email: "username@email.com",
-            image: require("./assets/profilePicture.png")
-        });
-    }, []);
+        setTimeout(() => {
+            setUser(userInfo)
+        }, 1000);
+    }, [userInfo])
+
+
     return (
         <View style={styles.container}>
             <ScrollView>
                 <View style={styles.profileContainer}>
-                    <Image source={user.image} style={styles.profilePicture} />
-                    <Text style={styles.profileName}>{user.name}</Text>
-                    <Text style={styles.profilemail}>{user.email}</Text>
+                    <Image source={require("./assets/profilePicture.png")} style={styles.profilePicture} />
+                    <Text style={styles.profileName}>{user?.username}</Text>
+                    <Text style={styles.profilemail}>{user?.email}</Text>
                 </View>
 
                 <View style={[styles.accountHeadings]}>
@@ -41,7 +46,7 @@ const AccountScreen = () => {
                         <TextInput
                             style={styles.input}
                             onChangeText={(text) => setAccountNumber(text)}
-                            value={accountNumber}
+                            value={user?.first_name}
                             placeholder="Enter"
                             placeholderTextColor="#000"
                             autoCapitalize="none"
@@ -54,7 +59,7 @@ const AccountScreen = () => {
                         <TextInput
                             style={styles.input}
                             onChangeText={(text) => setConfirmAccountNumber(text)}
-                            value={confirmAccountNumber}
+                            value={user?.last_name}
                             placeholder="Enter"
                             placeholderTextColor="#000"
                             autoCapitalize="none"
@@ -67,7 +72,6 @@ const AccountScreen = () => {
                         <TextInput
                             style={styles.input}
                             onChangeText={(text) => setRoutingNumber(text)}
-                            value={routingNumber}
                             placeholder="Enter"
                             placeholderTextColor="#000"
                             autoCapitalize="none"
@@ -202,14 +206,14 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: "#12D790"
     },
-    connectAcc:{fontSize: 14, fontWeight: "bold", color:"#000", paddingHorizontal: 30, marginVertical: 10},
+    connectAcc: { fontSize: 14, fontWeight: "bold", color: "#000", paddingHorizontal: 30, marginVertical: 10 },
     subHeader: {
         backgroundColor: "#F9F9F9",
         paddingHorizontal: 30,
         paddingTop: 10,
         paddingBottom: 15
-      },
-      mainContainer: {
+    },
+    mainContainer: {
         justifyContent: "flex-start",
         flexDirection: "row",
         paddingHorizontal: 10,
@@ -218,19 +222,19 @@ const styles = StyleSheet.create({
         borderBottomColor: "rgba(51, 51, 51, 0.05)",
         borderBottomWidth: 1,
         paddingBottom: 10
-      },
-      borderNull :{ borderBottomWidth: 0},
-      dot: { height: 16, width: 16, resizeMode: "contain", marginLeft: -10 },
-      orderStatusContainer: {
+    },
+    borderNull: { borderBottomWidth: 0 },
+    dot: { height: 16, width: 16, resizeMode: "contain", marginLeft: -10 },
+    orderStatusContainer: {
         justifyContent: "space-between",
         flexDirection: "row",
         alignItems: "center",
         paddingLeft: 10,
         paddingRight: 8,
-      },
-      statusHeading: { fontSize: 14, width: "50%", color: "#222222" },
-      statusText: { paddingHorizontal: 10, fontSize: 10, color: "#2A2B2E" },
-      statusTime: { textAlign: 'right', color:"#12D790", fontWeight: "bold"},
+    },
+    statusHeading: { fontSize: 14, width: "50%", color: "#222222" },
+    statusText: { paddingHorizontal: 10, fontSize: 10, color: "#2A2B2E" },
+    statusTime: { textAlign: 'right', color: "#12D790", fontWeight: "bold" },
 });
 
 export default AccountScreen;

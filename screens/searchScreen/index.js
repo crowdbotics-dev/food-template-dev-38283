@@ -8,7 +8,6 @@ import Loader from '../../components/Loader';
 const SearchScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [selectedTab, setSelectedTab] = useState(0);
-  const [products, setProducts] = useState([]);
   const [productsList, setProductsList] = useState([])
   const [isLoading, setIsLoading] = useState(false);
   const productList = useSelector((state) => state?.ecommerce.products);
@@ -61,9 +60,7 @@ const SearchScreen = ({ navigation }) => {
                 "./assets/search.png")} style={styles.mr10} />
             </View>
           </View>
-          <
-            // @ts-ignore
-            TabView1
+          <TabView1
             tabTitles={["Filters", "Nearby", "Above 4.5", "Cheapest"]}
             selected={selectedTab}
             onPress={setSelectedTab}
@@ -280,6 +277,8 @@ const SearchScreen = ({ navigation }) => {
             // @ts-ignore
             require("./assets/user.png")
           ]}
+          routes={['homeScreen', 'orderStatusScreen', 'searchScreen', 'accountScreen']}
+          navigation={navigation}
         />
       </View>
     </View>
@@ -594,12 +593,12 @@ const Footer = props => {
   return (
     <View style={[footerStyles.footer]}>
       {props.images.map((image, index) => (
-        <View style={footerStyles.footerItem} key={index}>
+        <Pressable style={footerStyles.footerItem} key={index} onPress={() => props.navigation.navigate(props.routes[index])}>
           <Image
             style={footerStyles.footerImage}
             source={image}
           />
-        </View>
+        </Pressable>
       ))}
     </View>
   );

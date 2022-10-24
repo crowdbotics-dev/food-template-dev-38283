@@ -1,15 +1,42 @@
+import Loader from "../../components/Loader";
 import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, View, Image, ScrollView, TouchableHighlight, Pressable, TextInput } from "react-native";
+import { useSelector } from "react-redux";
 
-const AddressScreen = () => {
+
+const AddressScreen = ({navigation, route}) => {
+  const [userAddresses, setUserAddresses] = useState([]);
+  const [currentAddress, setCurrentAddress] = useState({})
+  const [isLoading, setIsLoading] = useState(false);
+
+  const userAddress = useSelector(state => state?.ecommerce?.userAddress);
+
+  useEffect(() => {
+    setIsLoading(true)
+    setTimeout(() => {
+      const resultLength = userAddress.length
+      setUserAddresses(userAddress);
+      setCurrentAddress(userAddress[resultLength - 1])
+      setIsLoading(false)
+    }, 1000);
+
+  }, [userAddress])
+
+
+
+  const updateCurrentAddress = (address) => {
+    setCurrentAddress(address);
+  }
+
 
   return (
     <ScrollView style={[styles.container]} showsVerticalScrollIndicator={false}>
+      {isLoading && <Loader></Loader>}
       <View style={styles.searchContainer}>
         <Text style={styles.headText}>Current address</Text>
-        <View style={styles.inputText}>
+        <View style={[styles.inputText,{paddingVertical: 12, paddingLeft: 10}]}>
           <View style={{ flex: 1 }}>
-            <Input placeholder='8th Street, San Francisco' />
+            <Text>{currentAddress?.line1}</Text>
           </View>
           <Image source={require("./assets/map.png")} style={styles.mr10} />
         </View>
@@ -28,30 +55,25 @@ const AddressScreen = () => {
       </View>
 
       <Text style={styles.subheading}>My locations</Text>
-
-      <View style={styles.searchContainer}>
-        <Text style={styles.headText}>Home</Text>
-        <View style={styles.inputText}>
-          <View style={{ flex: 1 }}>
-            <Input placeholder='8th Street, San Francisco' />
+      {
+        userAddresses && userAddresses.map((address, index) =>
+          <View style={styles.searchContainer} key={index}>
+            <Text style={{}}></Text>
+            <Pressable style={styles.addressContainer} onPress={() => updateCurrentAddress(address)}>
+              <View style={{ flex: 1 }}>
+                <Text numberOfLines={1}>{address?.line1}</Text>
+              </View>
+              <Text style={styles.addressDelete}>Delete</Text>
+            </Pressable>
           </View>
-          <Text style={styles.addressDelete}>Delete</Text>
-        </View>
-      </View>
-      <View style={styles.searchContainer}>
-        <Text style={styles.headText}>Work</Text>
-        <View style={styles.inputText}>
-          <View style={{ flex: 1 }}>
-            <Input placeholder='8th Street, San Francisco' />
-          </View>
+        )
+      }
 
-          <Text style={styles.addressDelete}>Delete</Text>
-        </View>
-      </View>
-      <Pressable>
+
+      <Pressable onPress={() => navigation.navigate("mapScreen")}>
         <Text style={styles.addAddress}>+ Add new location</Text>
       </Pressable>
-      <Button buttonText={"Update"} />
+      <Button buttonText={"Update"} onPress={() => navigation.navigate("checkoutScreen", {currentAddress})}/>
     </ScrollView>
   );
 };
@@ -70,6 +92,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "#C4C4C4",
     backgroundColor: "#f7f7f7"
+  },
+  addressContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: "#C4C4C4",
+    backgroundColor: "#f7f7f7",
+    paddingHorizontal: 10,
+    paddingVertical: 15
   },
   mr10: {
     marginRight: 10,

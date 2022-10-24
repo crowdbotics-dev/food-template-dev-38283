@@ -32,7 +32,6 @@ export const getBasket = createAsyncThunk(
   "ecommerce/getBasket",
   async (payload) => {
     const response = await api.getBasketList();
-    console.log("My Basket: ", response.data)
     return response.data;
   }
 );
@@ -72,7 +71,7 @@ export const getOrderList = createAsyncThunk(
 export const addToBasket = createAsyncThunk(
   "ecommerce/addToBasket",
   async (payload) => {
-    const response = await api.adaddToBasketdToBasket(payload);
+    const response = await api.addToBasket(payload);
     return response.data;
   }
 );

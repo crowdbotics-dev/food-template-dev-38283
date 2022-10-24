@@ -87,15 +87,13 @@ export const autoCompleteStyles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     paddingHorizontal: 15,
-    height: '100%'
+    height: '100%',
+    width: "90%"
   },
   autoCompleteCOntainer: { zIndex: 1000, width: "90%", alignSelf: "center" },
   textInputContainer: {
     marginTop: 5,
     zIndex: 1000,
-    borderColor: "#ddd",
-    borderWidth: 1,
-    borderRadius: 10
   },
   textInput: {
     color: "#5d5d5d",

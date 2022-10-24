@@ -423,6 +423,7 @@ export const SignInTab = ({ navigation }) => {
 
 import { Image, StyleSheet, TouchableHighlight } from "react-native";
 import {setItem} from "../../../store"
+import Loader from "../../../components/Loader"
 
 export const Signup = ({navigation}) => {
   const [email, setEmail] = useState("");
@@ -434,9 +435,7 @@ export const Signup = ({navigation}) => {
   });
 
   const [checked, setChecked] = useState(true);
-  const pressed = () => {
-    navigation.navigate("homeScreen")
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
 
   // @ts-ignore
@@ -444,6 +443,7 @@ export const Signup = ({navigation}) => {
   const dispatch = useDispatch();
 
   const onSigninPress = async () => {
+    
     if (!validateEmail.test(email)) {
       return setValidationError({
         email: "Please enter a valid email address.",
@@ -459,6 +459,7 @@ export const Signup = ({navigation}) => {
     }
 
     // @ts-ignore
+    setIsLoading(true)
     dispatch(loginRequest({ username: email, password }))
       .then(unwrapResult)
       .then(async res => {
@@ -467,9 +468,10 @@ export const Signup = ({navigation}) => {
           setEmail("");
           setPassword("")
           navigation.navigate(HOME_SCREEN_NAME);
+          setIsLoading(false)
         }
       })
-      .catch(err => console.log(err.message));
+      .catch(err => {setIsLoading(false); console.log(err.message)});
   };
 
   const resetValidations = () => {
@@ -491,6 +493,7 @@ export const Signup = ({navigation}) => {
   
   return (
     <View style={styles.container}>
+      {isLoading && <Loader></Loader>}
       <View style={styles.heading}>
         <Text style={styles.headingText}>Welcome Back</Text>
         <Text style={styles.text}>Lorem ipsum dolor sit amet, {'\n'}consectetur adipiscing elit. Non at sed.</Text>
@@ -551,7 +554,7 @@ export const Signup = ({navigation}) => {
       </View>
       <View style={styles.footerContainer}>
         <Text style={styles.footerText}>Don’t have an account? </Text>
-        <TouchableOpacity onPress={pressed}>
+        <TouchableOpacity>
           <Text>Sign Up</Text>
         </TouchableOpacity>
       </View>

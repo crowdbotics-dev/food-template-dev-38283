@@ -44,18 +44,6 @@ export const productAvailability = async id => {
   return data;
 };
 
-export const getBaskets = async () => {
-  const token = await getItem("token")
-  const response = await fetch(`${BASE_URL}/api/baskets/`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Token " + token
-    }
-  });
-  const data = await response.json();
-  return data;
-};
 
 export const getPrice = async (url) => {
   const response = await fetch(
@@ -90,7 +78,7 @@ const getProductsList = async () => {
 
 const logoutUser = async () => {
   const token = await getItem("token")
-  return ecommerceAPI.post('/rest-auth/logout/',{
+  return ecommerceAPI.post('/rest-auth/logout/', {
     headers: {
       Authorization: `Token ${token}`
     }
@@ -100,7 +88,7 @@ const logoutUser = async () => {
 
 const getVendorsList = async () => {
   const token = await getItem("token")
-  return ecommerceAPI.get('/consumer/api/v1/vendors/',{
+  return ecommerceAPI.get('/consumer/api/v1/vendors/', {
     headers: {
       Authorization: `Token ${token}`
     }
@@ -109,7 +97,7 @@ const getVendorsList = async () => {
 
 const getBasketList = async () => {
   const token = await getItem("token")
-  return ecommerceAPI.get('/api/baskets/',{
+  return ecommerceAPI.get('/api/baskets/', {
     headers: {
       Authorization: `Token ${token}`
     }
@@ -118,7 +106,7 @@ const getBasketList = async () => {
 
 const getUserAddress = async () => {
   const token = await getItem("token")
-  return ecommerceAPI.get('/api/useraddresses/',{
+  return ecommerceAPI.get('/api/useraddresses/', {
     headers: {
       Authorization: `Token ${token}`
     }
@@ -128,7 +116,7 @@ const getUserAddress = async () => {
 
 const getCountry = async (country) => {
   const token = await getItem("token")
-  return ecommerceAPI.get(`${country}`,{
+  return ecommerceAPI.get(`${country}`, {
     headers: {
       Authorization: `Token ${token}`
     }
@@ -136,9 +124,9 @@ const getCountry = async (country) => {
 }
 
 
-const getUserInfo = async (url) => {
+const getUserInfo = async () => {
   const token = await getItem("token")
-  return ecommerceAPI.get(`/rest-auth/user/`,{
+  return ecommerceAPI.get(`/rest-auth/user/`, {
     headers: {
       Authorization: `Token ${token}`
     }
@@ -148,7 +136,7 @@ const getUserInfo = async (url) => {
 
 const getOrderList = async (url) => {
   const token = await getItem("token")
-  return ecommerceAPI.get(`/api/orders/`,{
+  return ecommerceAPI.get(`/api/orders/`, {
     headers: {
       Authorization: `Token ${token}`
     }
@@ -157,7 +145,6 @@ const getOrderList = async (url) => {
 
 
 const addToBasket = async (data) => {
-  console.log("API: ", data)
   const token = await getItem("token")
   return ecommerceAPI.post(`/api/basket/add-product/`, data, {
     headers: {

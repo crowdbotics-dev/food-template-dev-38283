@@ -1,59 +1,126 @@
 import React, { useEffect, useState } from "react";
-import { Text, StyleSheet, View, Image, ScrollView, TouchableHighlight, Pressable, TextInput } from "react-native";
+import { Text, StyleSheet, View, Image, ScrollView, TouchableHighlight, Pressable, TextInput, LogBox } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserAddress, getUserInfo, startCheckout } from "../../store";
+import Loader from "../../components/Loader";
 
-const CheckoutScreen = () => {
-  const [orders, setOrders] = useState([]);
+const CheckoutScreen = ({ navigation, route }) => {
+  const [cartProducts, setCartProducts] = useState([]);
+  const [basketData, setBasketData] = useState({});
+  const [user, setUser] = useState(null)
+  const [isLoading, setIsLoading] = useState(false);
+  const [addressError, setAddressError] = useState("");
+  const [currentAddress, setCurrentAddress] = useState({})
+  const dispatch = useDispatch();
+  const [shippingCharge, setShippingCharge] =  useState({
+    currency: "USD",
+    excl_tax: "0.0",
+    tax: "0.0"
+  });
+
+
+  // @ts-ignore
+  const userInfo = useSelector(state => state?.ecommerce?.user);
+  const userAddress = useSelector(state => state?.ecommerce?.userAddress);
+  useEffect(() => {
+    setTimeout(() => {
+      setUser(userInfo)
+      const resultLength = userAddress.length
+      setCurrentAddress(userAddress[resultLength - 1])
+    }, 1000);
+
+  }, [userInfo, userAddress])
+
+  const handleGetAddress = async () => {
+    setIsLoading(true)
+    await dispatch(getUserAddress()).then(async (res) => {
+      setIsLoading(false)
+    }).catch((err) => {
+      console.log("Error: ", err);
+      setIsLoading(false)
+    });
+  }
+
+  const handleCheckout = async () => {
+    setIsLoading(true);
+    const obj = {
+      basket: basketData?.url,
+      guest_email: "foo@example.com",
+      total: basketData?.total,
+      shipping_charge: shippingCharge,
+      shipping_method_code: "no-shipping-required",
+      shipping_address: currentAddress,
+      payment: {
+        stripe: {
+          enabled: true,
+          amount: basketData?.total
+        }
+      }
+    }
+    try {
+      await dispatch(startCheckout(obj)).then((res) => {
+        setIsLoading(false);
+        navigation.navigate('orderReceiveScreen', {basketData})
+      }).catch((error) => {console.log("Error: ", error);
+      setIsLoading(false);
+    })
+    } catch (error) {
+      setIsLoading(false);
+      console.log("Error: ", error)
+    }
+  }
+    
+
+  const handleGetUser = async () => {
+    await dispatch(getUserInfo()).then((res) => {}).catch((err) => console.log(err))
+  }
+
 
   useEffect(() => {
-    setOrders([
-      {
-        id: 1,
-        name: "1x Pizza Napoli XXL",
-        price: 18,
-      },
-      {
-        id: 2,
-        name: "2x Burger American BBQ",
-        price: 18,
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
+    if (route?.params?.basketData) {
+      const { line_details } = route?.params?.basketData
+      setCartProducts(line_details);
+      setBasketData(route?.params?.basketData)
+      setShippingCharge({ ...shippingCharge, currency: basketData.currency, excl_tax: basketData.delivery_fee, tax: basketData.total_tax })
+    }
+    if (route?.params?.currentAddress) {
+      setCurrentAddress(route?.params?.currentAddress)
+    }
+    handleGetAddress();
+    handleGetUser();
+  }, [route?.params]);
 
-      },
-      {
-        id: 3,
-        name: "1x Fried Chicken Dinne",
-        price: 18,
-      },
-    ]);
-  }, []);
   return (
     <ScrollView style={[styles.container]} showsVerticalScrollIndicator={false}>
-      <View style={styles.searchContainer}>
-        <View style={styles.headTextContainer}>
-          <Text style={styles.headText}>Address</Text>
-          <Text style={styles.editText}>Edit</Text>
-        </View>
-        <View style={styles.inputText}>
-          <View style={{ flex: 1 }}>
-            <Input placeholder='8th Street, San Francisco' />
-          </View>
-          <Image source={require("./assets/map.png")} style={styles.mr10} />
-        </View>
+      {isLoading && <Loader></Loader>}
+      <View style={styles.headTextContainer}>
+        <Text style={styles.headText}>Address</Text>
+        <Text style={styles.editText}>Edit</Text>
       </View>
+
+      <Pressable style={styles.autocomplete} onPress={() => navigation.navigate("addressScreen")}>
+        <Text>{currentAddress?.line1 || "Select Address"}</Text>
+        <Image source={require("./assets/map.png")} style={styles.mr10} />
+      </Pressable>
+      <Text style={styles.errorStyle}>{addressError}</Text>
+
       <View style={styles.mapContainer}>
         <Image source={require("./assets/mapIcon.png")} style={styles.mapIcon} />
       </View>
       <View style={styles.deliveryContainer}>
         <Text style={styles.deliveryHeading}>Delivery to</Text>
-        <Text style={styles.receiver}>Name/Surname</Text>
-        <Text style={styles.address}>4041 8th Street, San Francisco</Text>
+        <Text style={styles.receiver}>{user?.first_name + " " + user?.last_name || user?.username}</Text>
+        <Text style={styles.address}>{currentAddress?.line1}</Text>
       </View>
       <View style={styles.orderContainer}>
         <Text style={styles.orderHeading}>Your order</Text>
         {
-          orders && orders.map((order, index) =>
+          cartProducts && cartProducts.map((item, index) =>
             <View style={styles.subContainer} key={index}>
               <View style={styles.headTextContainer}>
-                <Text>{order.name}</Text>
-                <Text style={styles.orderPrice}>${order.price}</Text>
+                <Text><Text>{item?.quantity}x</Text>{" "}{item?.product?.title}</Text>
+                <Text style={styles.orderPrice}>${item?.price_incl_tax}</Text>
               </View>
               <Text style={styles.orderEdit}>Edit</Text>
             </View>
@@ -64,13 +131,13 @@ const CheckoutScreen = () => {
         <View style={styles.pricing}>
           <Text style={styles.subtotalText}>Subtotal:</Text>
           <Text style={styles.subtotalText}>
-            $18
+            {basketData?.total_excl_tax_excl_discounts}{" "}{basketData?.currency}
           </Text>
         </View>
         <View style={styles.pricing}>
           <Text style={styles.deliveryText}>Fee & delivery</Text>
           <Text style={styles.subtotalPrice}>
-            $0
+            {basketData?.delivery_fee}{" "}{basketData?.currency}
           </Text>
         </View>
 
@@ -84,10 +151,10 @@ const CheckoutScreen = () => {
 
         <View style={[styles.headTextContainer, { paddingHorizontal: 10 }]}>
           <Text style={styles.totalText}>Total</Text>
-          <Text style={styles.totalPrice}>$54</Text>
+          <Text style={styles.totalPrice}>{basketData?.total}{" "}{basketData?.currency}</Text>
         </View>
       </View>
-      <Button buttonText={"Order"} />
+      <Button buttonText={"Order"} onPress={() => handleCheckout()} />
     </ScrollView>
   );
 };
@@ -96,16 +163,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFF',
-    padding: 15
+    padding: 15,
+    width: '100%', height: "100%"
   },
-  searchContainer: {},
+
   inputText: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 10,
-    borderColor: "#C4C4C4",
-    backgroundColor: "#fff"
+  },
+  autocomplete: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderColor: "#F0F2F7",
+    borderWidth: 1, borderRadius: 10,
+    paddingVertical: 10,
+    paddingLeft: 10
   },
   mr10: {
     marginRight: 10,
@@ -187,10 +260,10 @@ const styles = StyleSheet.create({
   editText: { color: "#EA4335", fontWeight: "bold" },
   totalText: { color: "#313633", fontSize: 16 },
   totalPrice: { color: "#000000", fontSize: 14 },
-  deliveryContainer:{paddingHorizontal: 10},
-  deliveryHeading:{color:"#1E2022", fontSize: 14, fontWeight: "bold", marginBottom: 7},
-  receiver:{color:"#1E2022", fontSize: 13,  marginBottom: 4},
-  address:{color:"#1E2022", fontSize: 12, marginBottom: 4}
+  deliveryContainer: { paddingHorizontal: 10 },
+  deliveryHeading: { color: "#1E2022", fontSize: 14, fontWeight: "bold", marginBottom: 7 },
+  receiver: { color: "#1E2022", fontSize: 13, marginBottom: 4 },
+  address: { color: "#1E2022", fontSize: 12, marginBottom: 4 }
 })
 
 

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, View, Image, ScrollView, TouchableHighlight, Pressable, Alert } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
-import { getBasket } from "../../store";
-const ChartScreen = ({navigation}) => {
+import { getBasket, removeFromBasket } from "../../store";
+import Loader from "../../components/Loader";
+const ChartScreen = ({ navigation }) => {
   const [quantity, setQuantity] = useState(1);
   const [cartProducts, setCartProducts] = useState([]);
   const [basketData, setBasketData] = useState({});
@@ -26,8 +27,11 @@ const ChartScreen = ({navigation}) => {
   // @ts-ignore
   const myBasket = useSelector(state => state?.ecommerce?.myBasket);
   useEffect(() => {
-    setCartProducts(myBasket[0]?.line_details)
-    setBasketData(myBasket[0]);
+    setTimeout(() => {
+      setCartProducts(myBasket[0]?.line_details)
+      setBasketData(myBasket[0]);
+    }, 1000);
+
   }, [myBasket])
 
 
@@ -43,33 +47,47 @@ const ChartScreen = ({navigation}) => {
   }, [])
 
   const handleCheckout = () => {
-    
-    if ( cartProducts === undefined) {
+
+    if (cartProducts === undefined) {
       Alert.alert("No product in Basket!", "Please add at least one product in basket before checkout")
-    } else if (cartProducts.length === 0){
+    } else if (cartProducts.length === 0) {
       Alert.alert("No product in Basket!", "Please add at least one product in basket before checkout")
     } else {
       navigation.navigate('checkoutScreen', { basketData });
     }
 
   }
-  const leftSwipe = (id) => (
-    <Pressable style={styles.leftSwipe} onPress={() => console.log("Deleted Item: ", id)}>
+  const leftSwipe = (url) => (
+    <Pressable style={styles.leftSwipe} onPress={() => handleRemoveProduct(url)}>
       <Image source={require("./assets/delete.png")} style={styles.delete} />
     </Pressable>
   )
 
+  const handleRemoveProduct = async url => {
+    setIsLoading(true)
+    try {
+      await dispatch(removeFromBasket(url))
+        .then(res => {
+          handleGetBasket();
+        })
+        .catch(err => {console.log("ERROR: ", err);  setIsLoading(false)})
+    } catch (error) {
+      console.log("ERROR: ", error);
+      setIsLoading(false)
+    }
+  }
 
 
   return (
     <View style={[styles.container]}>
+      { isLoading && <Loader></Loader>}
       <ScrollView style={[styles.chartContainer]} showsVerticalScrollIndicator={false}>
         <View style={styles.forgetContainer}>
           <Text style={styles.promoText}>Order details</Text>
           <Image source={require("./assets/basket.png")} style={styles.filter} />
         </View>
         {cartProducts && cartProducts.map((item, index) =>
-          <Swipeable renderRightActions={() => leftSwipe(item.id)} key={index}>
+          <Swipeable renderRightActions={() => leftSwipe(item.url)} key={index}>
             <View style={styles.productContainer} >
               <View>
                 <Image source={{ uri: "https://cdnimg.webstaurantstore.com/uploads/blog/2019/3/blog-types-pizza_in-blog-8.jpg" || item?.images[0].original }} style={styles.productImage} />
@@ -160,7 +178,7 @@ const ChartScreen = ({navigation}) => {
             {basketData?.total}{" "}{basketData?.currency}
           </Text>
         </View>
-        <Button buttonText="Checkout" onPress={() =>handleCheckout()}/>
+        <Button buttonText="Checkout" onPress={() => handleCheckout()} />
       </View>
     </View>
   );

@@ -118,6 +118,8 @@ const Home = ({ navigation }) => {
             require("./assets/search.png"),
             require("./assets/user.png")
           ]}
+          routes={['homeScreen', 'orderStatusScreen', 'searchScreen', 'accountScreen']}
+          navigation={navigation}
         />
       </View>
     </View>
@@ -367,12 +369,12 @@ const Footer = props => {
   return (
     <View style={[footerStyles.footer]}>
       {props.images.map((image, index) => (
-        <View style={footerStyles.footerItem} key={index}>
+        <Pressable style={footerStyles.footerItem} key={index} onPress={() => props.navigation.navigate(props.routes[index])}>
           <Image
             style={footerStyles.footerImage}
             source={image}
           />
-        </View>
+        </Pressable>
       ))}
     </View>
   );

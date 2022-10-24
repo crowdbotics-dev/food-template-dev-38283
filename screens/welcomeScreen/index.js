@@ -43,6 +43,7 @@ const Welcome = ({ navigation }) => {
           backgroundColor="#fff"
           textColor="#000"
           hideShadow
+          onPress={() => navigation.navigate("login")}
         />
       </View>
     </View>

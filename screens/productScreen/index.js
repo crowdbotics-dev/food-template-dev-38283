@@ -19,8 +19,15 @@ const ProductDetails = ({ navigation, route }) => {
   const [productPrice, setProductPrice] = useState(1);
 
   const handlePrice = async (priceUrl) => {
-    const price = await getPrice(priceUrl);
-    setProductPrice(price)
+    setIsLoading(true)
+    await getPrice(priceUrl).then((res) => {
+      setProductPrice(res);
+      setIsLoading(false)
+    }).catch((err) => {
+      setIsLoading(false)
+      console.log("Error: ", err)
+    });
+
   }
   useEffect(() => {
     if (route?.params?.product) {
@@ -45,18 +52,17 @@ const ProductDetails = ({ navigation, route }) => {
   }
 
   const handleConfirmation = async id => {
+    setIsLoading(true)
     const data = {
       quantity,
       url: id,
-      partner_id: 2 || product?.partner_info?.id,
+      partner_id: 4 || product?.partner_info?.id,
     }
-    setIsLoading(true)
     try {
       await dispatch(addToBasket(data)).then(async (res) => {
         setIsLoading(false);
         await cartProducts().then((res) => navigation.navigate("chartScreen"));
       }).catch((error) => { console.log("error: ", error); setIsLoading(false) })
-
     } catch (error) {
       console.log("ERROR: ", error)
       setIsLoading(false)
@@ -64,7 +70,6 @@ const ProductDetails = ({ navigation, route }) => {
   };
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {isLoading && <Loader></Loader>}
       <ImageBackground source={{ uri: "https://cdnimg.webstaurantstore.com/uploads/blog/2019/3/blog-types-pizza_in-blog-8.jpg" || product?.Images[0]?.original || "jt" }} resizeMode="cover" style={styles.imageContainer}>
         <Pressable style={styles.heartIconContainer}>
           <Image
@@ -73,6 +78,7 @@ const ProductDetails = ({ navigation, route }) => {
           />
         </Pressable>
       </ImageBackground>
+      {isLoading && <Loader></Loader>}
       <View style={styles.cardContainer}>
         <View style={styles.flexRow}>
           <Text style={styles.title}>{product?.title}</Text>
