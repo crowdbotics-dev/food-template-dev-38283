@@ -50,7 +50,7 @@ except (DefaultCredentialsError, PermissionDenied):
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env.str("SECRET_KEY","123456789")
+SECRET_KEY = env.str("SECRET_KEY")
 
 ALLOWED_HOSTS = env.list("HOST", default=["*"])
 SITE_ID = 1
@@ -94,25 +94,7 @@ THIRD_PARTY_APPS = [
 ]
 
 OSCAR_APPS = [
-    # 'django.contrib.flatpages',
-    # 'oscar.config.Shop',
-    # 'oscar.apps.catalogue.reviews.apps.CatalogueReviewsConfig',
-    # 'oscar.apps.search.apps.SearchConfig',
-    # 'oscar.apps.dashboard.apps.DashboardConfig',
-    # 'oscar.apps.dashboard.reports.apps.ReportsDashboardConfig',
-    # 'oscar.apps.dashboard.users.apps.UsersDashboardConfig',
-    # 'oscar.apps.dashboard.orders.apps.OrdersDashboardConfig',
-    # 'oscar.apps.dashboard.catalogue.apps.CatalogueDashboardConfig',
-    # 'oscar.apps.dashboard.offers.apps.OffersDashboardConfig',
-    # 'oscar.apps.dashboard.partners.apps.PartnersDashboardConfig',
-    # 'oscar.apps.dashboard.pages.apps.PagesDashboardConfig',
-    # 'oscar.apps.dashboard.ranges.apps.RangesDashboardConfig',
-    # 'oscar.apps.dashboard.reviews.apps.ReviewsDashboardConfig',
-    # 'oscar.apps.dashboard.vouchers.apps.VouchersDashboardConfig',
-    # 'oscar.apps.dashboard.communications.apps.CommunicationsDashboardConfig',
-    # 'oscar.apps.dashboard.shipping.apps.ShippingDashboardConfig',
-
-'django.contrib.flatpages',
+    'django.contrib.flatpages',
     'oscar.config.Shop',
     'oscar.apps.catalogue.reviews.apps.CatalogueReviewsConfig',
     'oscar.apps.search.apps.SearchConfig',
@@ -180,23 +162,13 @@ WSGI_APPLICATION = 'food_template_dev_38283.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ecomerce',
-        'USER': 'ecomerce',
-        'PASSWORD': 'ecomerce',
-        'HOST': 'localhost',
-        'PORT': 5432,
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
 
 if env.str("DATABASE_URL", default=None):
     DATABASES = {

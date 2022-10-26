@@ -103,9 +103,9 @@ in options/options.js update the `globalOptions` object.
 ```javascript
 export const globalOptions = {
   name: "food_template_dev_38283",
-  url: "https://ecommerce-37121.botics.co",
-  api: "https://ecommerce-37121.botics.co/api/v1",
-  oscar_countries: "https://ecommerce-37121.botics.co/api/countries/US/",
+  url: "https://food-template-dev-38283.botics.co",
+  api: "https://food-template-dev-38283.botics.co/api/v1",
+  oscar_countries: "https://food-template-dev-38283.botics.co/api/countries/US/",
   title : "Mr",
   partner_id: 1
 }
