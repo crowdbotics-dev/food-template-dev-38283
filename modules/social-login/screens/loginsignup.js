@@ -674,7 +674,7 @@ export const SignUp = ({ navigation }) => {
         <View>
           <Text style={[styles.mr10, { marginTop: 10 }]}>Confirm Password</Text>
           <Input
-            placeholder='confirm Password'
+            placeholder='Confirm Password'
             onChangeText={handleInputConfirmPassword}
             errorText={validationError.password}
             secure={true}
