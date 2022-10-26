@@ -1,18 +1,21 @@
 // @ts-nocheck
 import Loader from "../../components/Loader";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Text, View, StyleSheet, Image, Pressable, ScrollView, ImageBackground } from "react-native";
 import { RadioButton } from 'react-native-paper';
 import { addToBasket, cartCount, cartCounts } from "../../store";
 import { getPrice } from "../../store/apis";
 import { useDispatch } from "react-redux";
+import { GlobalOptionsContext } from "@options";
 
 const ProductDetails = ({ navigation, route }) => {
+  const gOptions = useContext(GlobalOptionsContext);
   const dispatch = useDispatch();
   const [checked, setChecked] = useState(false);
   const [checked2, setChecked2] = useState(true);
   const [checked3, setChecked3] = useState(false);
   const [checked4, setChecked4] = useState(false);
+  const [favorite, setFavorite] = useState(false);
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +34,7 @@ const ProductDetails = ({ navigation, route }) => {
   }
   useEffect(() => {
     if (route?.params?.product) {
+     
       setProduct(route?.params?.product)
       handlePrice(route?.params?.product?.price);
     }
@@ -56,7 +60,7 @@ const ProductDetails = ({ navigation, route }) => {
     const data = {
       quantity,
       url: id,
-      partner_id: 4 || product?.partner_info?.id,
+      partner_id:  gOptions.partner_id,
     }
     try {
       await dispatch(addToBasket(data)).then(async (res) => {
@@ -68,12 +72,14 @@ const ProductDetails = ({ navigation, route }) => {
       setIsLoading(false)
     }
   };
+
+  const imgUrl = product?.images?.length ? product?.images[0]?.original : "https://cdnimg.webstaurantstore.com/uploads/blog/2019/3/blog-types-pizza_in-blog-8.jpg"
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <ImageBackground source={{ uri: "https://cdnimg.webstaurantstore.com/uploads/blog/2019/3/blog-types-pizza_in-blog-8.jpg" || product?.Images[0]?.original || "jt" }} resizeMode="cover" style={styles.imageContainer}>
-        <Pressable style={styles.heartIconContainer}>
+      <ImageBackground source={{ uri: imgUrl }} resizeMode="cover" style={styles.imageContainer}>
+        <Pressable style={styles.heartIconContainer} onPress={() =>setFavorite(!favorite)}>
           <Image
-            source={require("./assets/heartIcon.png")}
+            source={favorite ? require("./assets/favoriteIcon.png") : require("./assets/heartIcon.png")}
             style={styles.heartIcon}
           />
         </Pressable>

@@ -147,7 +147,7 @@ const onGoogleConnect = async (dispatch, navigation) => {
     // @ts-ignore
     dispatch(googleLogin({ access_token: tokens.accessToken }))
       .then(unwrapResult)
-      .then( async res => {
+      .then(async res => {
         if (res.key) {
           await setItem('token', res.key)
           navigation.navigate(HOME_SCREEN_NAME);
@@ -422,10 +422,10 @@ export const SignInTab = ({ navigation }) => {
 
 
 import { Image, StyleSheet, TouchableHighlight } from "react-native";
-import {setItem} from "../../../store"
+import { setItem } from "../../../store"
 import Loader from "../../../components/Loader"
 
-export const Signup = ({navigation}) => {
+export const SignIn = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -443,7 +443,7 @@ export const Signup = ({navigation}) => {
   const dispatch = useDispatch();
 
   const onSigninPress = async () => {
-    
+
     if (!validateEmail.test(email)) {
       return setValidationError({
         email: "Please enter a valid email address.",
@@ -465,13 +465,14 @@ export const Signup = ({navigation}) => {
       .then(async res => {
         if (res.token) {
           await setItem('token', res.token)
+          await setItem('user', JSON.stringify(res?.user))
           setEmail("");
           setPassword("")
           navigation.navigate(HOME_SCREEN_NAME);
           setIsLoading(false)
         }
       })
-      .catch(err => {setIsLoading(false); console.log(err.message)});
+      .catch(err => { setIsLoading(false); console.log(err.message) });
   };
 
   const resetValidations = () => {
@@ -490,7 +491,7 @@ export const Signup = ({navigation}) => {
     setPassword(value)
     resetValidations()
   }
-  
+
   return (
     <View style={styles.container}>
       {isLoading && <Loader></Loader>}
@@ -518,16 +519,16 @@ export const Signup = ({navigation}) => {
         </View>
         <View style={styles.forgetContainer}>
           <View style={styles.rememberContainer}>
-          <Checkbox color={"#000"}  status={checked ? 'checked' : 'unchecked'}
-                onPress={() => setChecked(!checked)}/>
-            <Text style={{paddingLeft: 5}}>Remember me</Text>
+            <Checkbox color={"#000"} status={checked ? 'checked' : 'unchecked'}
+              onPress={() => setChecked(!checked)} />
+            <Text style={{ paddingLeft: 5 }}>Remember me</Text>
           </View>
           <Text>Forget Password?</Text>
         </View>
         <View style={styles.loginContainer}>
           <SignInButton onPress={onSigninPress}>Log In</SignInButton>
         </View>
-        
+
         <View style={styles.orContainer}>
           <View style={styles.line} />
           <Text style={styles.orText}>Or Sign In With</Text>
@@ -548,14 +549,170 @@ export const Signup = ({navigation}) => {
               source={require("../../../assets/fbIcon.png")}
               style={styles.icon}
             />
-             <Text style={styles.socialText}>Facebook</Text>
+            <Text style={styles.socialText}>Facebook</Text>
           </Pressable>
         </View>
       </View>
       <View style={styles.footerContainer}>
         <Text style={styles.footerText}>Don’t have an account? </Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("SignUpScreen")}>
           <Text>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+export const SignUp = ({ navigation }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [validationError, setValidationError] = useState({
+    email: "",
+    password: ""
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+
+  // @ts-ignore
+  const { api } = useSelector(state => state.Login);
+  const dispatch = useDispatch();
+
+  const onSignupPress = async () => {
+    setValidationError({ email: "", password: "" });
+    if (!validateEmail.test(email)) {
+      return setValidationError({
+        email: "Please enter a valid email address.",
+        password: ""
+      });
+    }
+
+    if (!password) {
+      return setValidationError({
+        email: "",
+        password: "Please enter a valid password"
+      });
+    }
+
+    if (password !== confirmPassword) {
+      return setValidationError({
+        email: "",
+        password: "Confirm password and password do not match."
+      });
+    }
+    setIsLoading(true)
+    // @ts-ignore
+    dispatch(signupRequest({ email, password }))
+      // @ts-ignore
+      .then(unwrapResult)
+      .then(async (res) => {
+        // await setItem('token', res.token)
+        // await setItem('userID', res?.user?.id.toString())
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setIsLoading(false)
+        Alert.alert(
+          "Signup Success",
+          "Registration Successful. A confirmation will be sent to your e-mail address.",
+          [
+            { text: "OK", onPress: () => navigation.navigate("LoginScreen") }
+          ]
+        )
+      })
+      .catch(err => { console.log(err.message); setIsLoading(false) });
+  };
+
+  const resetValidations = () => {
+    return setValidationError({
+      email: "",
+      password: ""
+    });
+  }
+
+  const handleInputEmail = (value) => {
+    setEmail(value)
+    resetValidations()
+  }
+
+  const handleInputPassword = (value) => {
+    setPassword(value)
+    resetValidations()
+  }
+
+  const handleInputConfirmPassword = (value) => {
+    setConfirmPassword(value)
+    resetValidations()
+  }
+
+  return (
+    <View style={styles.container}>
+      {isLoading && <Loader></Loader>}
+      <View style={styles.heading}>
+        <Text style={styles.headingText}>Welcome Back</Text>
+        <Text style={styles.text}>Lorem ipsum dolor sit amet, {'\n'}consectetur adipiscing elit. Non at sed.</Text>
+      </View>
+      <View>
+        <View style={styles.emailContainer}>
+          <Text style={styles.mr10}>Email</Text>
+          <Input
+            placeholder='Email'
+            onChangeText={handleInputEmail}
+            errorText={validationError.email}
+          />
+        </View>
+        <View>
+          <Text style={styles.mr10}>Password</Text>
+          <Input
+            placeholder='Password'
+            onChangeText={handleInputPassword}
+            errorText={validationError.password}
+            secure={true}
+          />
+        </View>
+        <View>
+          <Text style={[styles.mr10, { marginTop: 10 }]}>Confirm Password</Text>
+          <Input
+            placeholder='confirm Password'
+            onChangeText={handleInputConfirmPassword}
+            errorText={validationError.password}
+            secure={true}
+          />
+        </View>
+
+        <View style={[styles.loginContainer, { marginTop: 40 }]}>
+          <SignInButton onPress={onSignupPress}>Sign Up</SignInButton>
+        </View>
+
+        <View style={styles.orContainer}>
+          <View style={styles.line} />
+          <Text style={styles.orText}>Or Sign Up With</Text>
+          <View style={styles.line} />
+        </View>
+        <View style={styles.imageContainer}>
+          <Pressable style={styles.iconContainer} onPress={() => onGoogleConnect(dispatch)}>
+            <Image
+              // @ts-ignore
+              source={require("../../../assets/googleIcon.png")}
+              style={styles.icon}
+            />
+            <Text style={styles.socialText}>Google</Text>
+          </Pressable>
+          <Pressable style={styles.iconContainer} onPress={() => onFacebookConnect(dispatch)}>
+            <Image
+              // @ts-ignore
+              source={require("../../../assets/fbIcon.png")}
+              style={styles.icon}
+            />
+            <Text style={styles.socialText}>Facebook</Text>
+          </Pressable>
+        </View>
+      </View>
+      <View style={styles.footerContainer}>
+        <Text style={styles.footerText}>Already have an account? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
+          <Text>Sign In</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -593,7 +750,7 @@ const styles = StyleSheet.create({
     marginBottom: 40
   },
   loginContainer: {
-    marginTop: 10,
+    marginTop: "5%",
     width: "90%",
     alignSelf: "center"
   },
@@ -661,9 +818,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
-    
+
   },
-  socialText:{color: "#222222"}
+  socialText: { color: "#222222" }
 });
 
 

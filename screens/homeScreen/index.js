@@ -10,10 +10,23 @@ import {
   Dimensions,
   Pressable
 } from "react-native";
+import { getItem } from "../../store/index";
 
 
 const Home = ({ navigation }) => {
   const [screenWidth, setScreenWidth] = useState(null)
+  const [userName, setUserName] = useState('');
+  
+  const getUserName = async ()=>{
+   const response = JSON.parse(await getItem('user'));
+   setUserName(response.name);
+  
+  }
+
+  useEffect(()=>{
+    getUserName();
+  }, [])
+
   const data = [
     {
       id: 1,
@@ -55,12 +68,14 @@ const Home = ({ navigation }) => {
           </View>
 
           <View style={styles.heading}>
-            <Text style={styles.headingText}>Hello, Username</Text>
+            <Text style={styles.headingText}>{`Hello, ${userName}`}</Text>
             <Text style={styles.text}>What do you want to eat?</Text>
           </View>
           <View style={styles.imageContainer}>
             <View>
-              <Pressable style={styles.iconContainer} >
+              <Pressable 
+              onPress={()=>navigation.navigate('searchScreen', {query : 'favorite'})}
+              style={styles.iconContainer} >
                 <Image
                   source={require("./assets/blackheart.png")}
                   style={styles.icon}
@@ -70,14 +85,18 @@ const Home = ({ navigation }) => {
             </View>
             <View>
               <View style={styles.iconContainer}>
+              <Pressable 
+              onPress={()=>navigation.navigate('searchScreen', {query : 'Cheap'})}
+              style={styles.iconContainer} >
                 <Image
                   source={require("./assets/pin.png")}
                   style={styles.iconCheap}
                 />
+                </Pressable>
               </View>
               <Text style={styles.iconText}>Cheap</Text>
             </View>
-            <View>
+            <Pressable onPress={()=>navigation.navigate('searchScreen', {query : 'trend'})}>
               <View style={styles.iconContainer}>
                 <Image
                   source={require("./assets/trend.png")}
@@ -85,8 +104,8 @@ const Home = ({ navigation }) => {
                 />
               </View>
               <Text style={styles.iconText}>Trend</Text>
-            </View>
-            <View>
+            </Pressable>
+            <Pressable onPress={()=>navigation.navigate('searchScreen', {query : 'more'})}>
               <View style={styles.iconContainer}>
                 <Image
                   source={require("./assets/dots.png")}
@@ -94,7 +113,7 @@ const Home = ({ navigation }) => {
                 />
               </View>
               <Text style={styles.iconText}>More</Text>
-            </View>
+            </Pressable>
           </View>
           <View style={styles.forgetContainer}>
             <Text style={styles.promoText}>Today's promo</Text>
@@ -103,7 +122,7 @@ const Home = ({ navigation }) => {
 
           <FlatList
             data={data}
-            renderItem={({ item }) => <ExploreItem event={item} width={screenWidth}/>}
+            renderItem={({ item }) => <ExploreItem event={item} width={screenWidth} navigation={navigation}/>}
             keyExtractor={item => item.id.toString()}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
@@ -256,9 +275,10 @@ const textStyles = StyleSheet.create({
 });
 
 
-const ExploreItem = ({ event, width}) => {
+const ExploreItem = ({ event, width, navigation}) => {
   return (
     <View style={[exploreItemStyles.container, {width : width-50}]}>
+      <Pressable onPress={()=>{navigation.navigate('searchScreen')}}>
       <View style={exploreItemStyles.header}>
         <View style={exploreItemStyles.heading}>
           <Text style={exploreItemStyles.text}>Discover</Text>
@@ -282,6 +302,7 @@ const ExploreItem = ({ event, width}) => {
           <Text style={exploreItemStyles.stock}>5 Left</Text>
         </View>
       </View>
+      </Pressable>
     </View>
   );
 };
@@ -406,3 +427,38 @@ const footerStyles = StyleSheet.create({
     resizeMode: "contain"
   }
 });
+
+// {
+//   "basket": "https://drone-express-36671.botics.co/api/baskets/77/",
+//   "guest_email": "foo@example.com",
+//   "total": 40,
+//   "shipping_charge": {
+// "currency": "USD",
+// "excl_tax": "0.0",
+// "tax": "0.0"
+// },
+//   "shipping_method_code": "no-shipping-required",
+//   "shipping_address": {
+// "title": "Mr",
+// "first_name": "saad",
+// "last_name": "abid",
+// "line1": "Bwp, Pnb, PAK",
+// "line2": "BWP",
+// "line3": "",
+// "line4": "PNB",
+// "state": "PNB",
+// "postcode": "63100",
+// "phone_number": "",
+// "is_default_for_shipping": true,
+// "is_default_for_billing": true,
+// "country": "https://drone-express-36671.botics.co/api/countries/US/",
+// "lat": 0,
+// "lng": 0
+// },
+//   "payment": {
+//     "stripe": {
+//       "enabled": true,
+//       "amount": 40
+//     }
+//   }
+// }

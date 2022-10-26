@@ -8,4 +8,4 @@ export const validateEmail = new RegExp(
 );
 
 // Change here the  name of the screen on navigator you want to redirect after Login
-export const HOME_SCREEN_NAME = "searchScreen"
+export const HOME_SCREEN_NAME = "homeScreen"

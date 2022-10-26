@@ -72,6 +72,7 @@ const ecommerceAPI = axios.create({
 });
 
 
+
 const getProductsList = async () => {
   return ecommerceAPI.get('/api/products/');
 }
@@ -164,6 +165,16 @@ const addUserAddress = async (data) => {
 }
 
 
+const deleteUserAddress = async (id) => {
+  const token = await getItem("token")
+  return ecommerceAPI.delete(`/api/useraddresses/${id}`, {
+    headers: {
+      Authorization: `Token ${token}`
+    }
+  });
+}
+
+
 const removeFromBasket = async (url) => {
   const token = await getItem("token")
   return ecommerceAPI.delete(`${url}`, {
@@ -202,7 +213,8 @@ export const api = {
   addToBasket,
   addUserAddress,
   removeFromBasket,
-  startCheckout
+  startCheckout,
+  deleteUserAddress
 };
 
 

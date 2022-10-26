@@ -1,10 +1,11 @@
 import Loader from "../../components/Loader";
 import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, View, Image, ScrollView, TouchableHighlight, Pressable, TextInput } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteUserAddress, getUserAddress } from "../../store";
 
-
-const AddressScreen = ({navigation, route}) => {
+const AddressScreen = ({ navigation, route }) => {
+  const dispatch = useDispatch();
   const [userAddresses, setUserAddresses] = useState([]);
   const [currentAddress, setCurrentAddress] = useState({})
   const [isLoading, setIsLoading] = useState(false);
@@ -28,13 +29,27 @@ const AddressScreen = ({navigation, route}) => {
     setCurrentAddress(address);
   }
 
+  const handleDeleteAddress = async (id) => {
+    setIsLoading(true)
+    await dispatch(deleteUserAddress(id)).then(async (res) => {
+      await dispatch(getUserAddress()).then((response) => {
+        setIsLoading(false)
+      }).catch((error) => {
+        setIsLoading(false);
+        console.log("Error: ", error)
+      })
+    }).catch((err) => {
+      console.log("Error: ", err);
+      setIsLoading(false);
+    })
+  }
 
   return (
     <ScrollView style={[styles.container]} showsVerticalScrollIndicator={false}>
       {isLoading && <Loader></Loader>}
       <View style={styles.searchContainer}>
         <Text style={styles.headText}>Current address</Text>
-        <View style={[styles.inputText,{paddingVertical: 12, paddingLeft: 10}]}>
+        <View style={[styles.inputText, { paddingVertical: 12, paddingLeft: 10 }]}>
           <View style={{ flex: 1 }}>
             <Text>{currentAddress?.line1}</Text>
           </View>
@@ -63,7 +78,9 @@ const AddressScreen = ({navigation, route}) => {
               <View style={{ flex: 1 }}>
                 <Text numberOfLines={1}>{address?.line1}</Text>
               </View>
-              <Text style={styles.addressDelete}>Delete</Text>
+              <Pressable onPress={() =>handleDeleteAddress(address?.id)}>
+                <Text style={styles.addressDelete}>Delete</Text>
+              </Pressable>
             </Pressable>
           </View>
         )
@@ -73,7 +90,7 @@ const AddressScreen = ({navigation, route}) => {
       <Pressable onPress={() => navigation.navigate("mapScreen")}>
         <Text style={styles.addAddress}>+ Add new location</Text>
       </Pressable>
-      <Button buttonText={"Update"} onPress={() => navigation.navigate("checkoutScreen", {currentAddress})}/>
+      <Button buttonText={"Update"} onPress={() => navigation.navigate("checkoutScreen", { currentAddress })} />
     </ScrollView>
   );
 };

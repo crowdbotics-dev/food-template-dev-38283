@@ -1,17 +1,23 @@
 import { View, Text, Image, StyleSheet, TextInput, ScrollView, Pressable, ImageBackground, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { getProductsList } from "../../store";
+import { useDispatch } from 'react-redux';
+import { getItem, getProductsList, setItem } from "../../store";
 import { getProduct, getProducts, productAvailability } from '../../store/apis';
 import Loader from '../../components/Loader';
 
-const SearchScreen = ({ navigation }) => {
+const SearchScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
   const [selectedTab, setSelectedTab] = useState(0);
   const [productsList, setProductsList] = useState([])
   const [isLoading, setIsLoading] = useState(false);
-  const productList = useSelector((state) => state?.ecommerce.products);
 
+  const [fav, setFav] = useState([]);
+  
+  const query = route?.params?.query;
+
+  useEffect(()=>{
+    initializeFavorite();
+  }, [])
 
   const handleProducts = async () => {
     setIsLoading(true)
@@ -29,10 +35,58 @@ const SearchScreen = ({ navigation }) => {
     setIsLoading(false);
   }
 
+  const handleSearch = (text) => {
+    if (text) {
+      let filterList = productsList?.filter(item => item?.title?.toLowerCase().includes(text?.toLowerCase()));
+      setProductsList(filterList);
+    } else {
+      handleProducts();
+    }
+  }
+
+  const handleFilter = (filter) => {
+    if (productsList?.length) {
+      if (filter == 'favorite') {
+        const filteredArray = productsList.filter(value => fav.includes(value?.id));
+        setProductsList(filteredArray);
+      } else {
+        const filteredProduct = productsList?.filter(item => item?.categories?.includes(filter));
+        setProductsList(filteredProduct);
+        setSelectedTab(3)
+      }
+    }
+  }
+
+  const initializeFavorite = async () => {
+    let favorites = JSON.parse(await getItem("favorite") || '[]');
+    setFav(favorites);
+  }
+
+  const handleFavorite = async (id) => {
+    let favorites = JSON.parse(await getItem("favorite") || '[]');
+    const isFavorite = favorites.includes(id);
+    if (isFavorite) {
+      favorites = favorites.filter(item => item !== id)
+    } else {
+      favorites.push(id);
+    }
+    setItem("favorite", JSON.stringify(favorites));
+    setFav(favorites);
+  }
+
+  const getFavorite =  (id)=>{
+    return fav.includes(id);
+  }
 
   useEffect(() => {
     handleProducts();
-    dispatch(getProductsList()).then((res) => { }).catch((err) => console.log("Error: ", err))
+    dispatch(getProductsList()).then((res) => {}).catch((err) => console.log("Error: ", err))
+  }, [])
+
+  useEffect(() => {
+    if (query) {
+      handleFilter(query);
+    }
   }, [])
 
 
@@ -53,7 +107,11 @@ const SearchScreen = ({ navigation }) => {
             <Text style={styles.headText}>Search</Text>
             <View style={styles.inputText}>
               <View style={{ flex: 1 }}>
-                <Input placeholder='Enter' />
+                <TextInput 
+                // value={searchText}
+                onChangeText={handleSearch}
+                placeholder='Search' 
+                />
               </View>
               <Image source={require(
                 // @ts-ignore
@@ -66,10 +124,10 @@ const SearchScreen = ({ navigation }) => {
             onPress={setSelectedTab}
             style={styles.tabView1}
             icons={[
+               // @ts-ignore
+               require("./assets/tabshare.png"),
               // @ts-ignore
               require("./assets/tabfilter.png"),
-              // @ts-ignore
-              require("./assets/tabshare.png"),
               // @ts-ignore
               require("./assets/tabstar.png"),
               // @ts-ignore
@@ -105,161 +163,47 @@ const SearchScreen = ({ navigation }) => {
               "./assets/filter.png")} style={styles.filter} />
           </View>
           {
-            isLoading ? <Loader></Loader> :
-              <View>
-                <View style={styles.centerBox}>
-                  <TouchableOpacity onPress={() => navigation.navigate("productScreen", { product: productsList[0] })}>
-                    <ImageBackground source={{ uri: productsList[0]?.images[0]?.original }} style={styles.box}>
-                      <View style={styles.courseTop}>
-                        <Pressable style={styles.heartIconContainer}>
-                          <Image
-                            // @ts-ignore
-                            source={require("./assets/heartIcon.png")}
-                            style={styles.heartIcon}
-                          />
-                        </Pressable>
-                        <Text style={styles.rateLabel}>4.7</Text>
-                      </View>
-                      <View style={styles.imageBox}>
-                        <Image source={require(
+            isLoading ?<Loader></Loader> :
+              <View style={styles.wrapper}>
+               {productsList?.map((item, index)=>{
+                return <View key={index} style={styles.centerBox}>
+                <TouchableOpacity onPress={() => navigation.navigate("productScreen", { product: item })}>
+                  <ImageBackground source={{ uri: item.images[0]?.original }} style={styles.box}>
+                    <View style={styles.courseTop}>
+                      <Pressable style={styles.heartIconContainer}
+                      onPress={() => handleFavorite(item?.id)}
+                      >
+                        <Image
                           // @ts-ignore
-                          "./assets/edit.png")} style={styles.editImg} />
-                      </View>
-                    </ImageBackground>
-                    <View style={styles.boxBottom}>
-
+                          source={getFavorite(item?.id) ? require("./assets/heartIcon.png") : require("./assets/favoriteIcon.png")}
+                          style={styles.heartIcon}
+                        />
+                      </Pressable>
+                      <Text style={styles.rateLabel}>4.7</Text>
+                    </View>
+                  </ImageBackground>
+                  <View style={styles.boxBottom}>
+                    <View style={styles.nameContainer}>
+                      <Text style={styles.courseName}>{item?.title}</Text>
                       <View style={styles.nameContainer}>
-                        <Text style={styles.courseName}>{productsList[0]?.title}</Text>
-                        <View style={styles.nameContainer}>
-                          <Text style={{ fontSize: 8, color: "#7C7C7C" }}>1.3mi </Text>
-                          <Image source={require(
-                            // @ts-ignore
-                            "./assets/loc.png")} style={styles.loc} />
-                        </View>
-                      </View>
-
-                      <View style={styles.cardsContainer}>
+                        <Text style={{ fontSize: 8, color: "#7C7C7C" }}>1.3mi </Text>
                         <Image source={require(
                           // @ts-ignore
-                          "./assets/cards.png")} style={styles.cards} />
-                        <Text style={styles.count}>+5 comments</Text>
+                          "./assets/loc.png")} style={styles.loc} />
                       </View>
                     </View>
-                  </TouchableOpacity>
 
-                  <TouchableOpacity onPress={() => navigation.navigate("productScreen", { product: productsList[1] })}>
-                    <ImageBackground source={{ uri: productsList[1]?.images[1]?.original }} style={styles.box}>
-                      <View style={styles.courseTop}>
-                        <Pressable style={styles.heartIconContainer}>
-                          <Image
-                            // @ts-ignore
-                            source={require("./assets/heartIcon.png")}
-                            style={styles.heartIcon}
-                          />
-                        </Pressable>
-                        <Text style={styles.rateLabel}>4.7</Text>
-                      </View>
-                      <View style={styles.imageBox}>
-                        <Image source={require(
-                          // @ts-ignore
-                          "./assets/edit.png")} style={styles.editImg} />
-                      </View>
-                    </ImageBackground>
-                    <View style={[styles.boxBottom, styles.ml10]}>
-                      <View style={styles.nameContainer}>
-                        <Text style={styles.courseName}>{productsList[1]?.title}</Text>
-                        <View style={styles.nameContainer}>
-                          <Text style={{ fontSize: 8, color: "#7C7C7C" }}>1.3mi </Text>
-                          <Image source={require(
-                            // @ts-ignore
-                            "./assets/loc.png")} style={styles.loc} />
-                        </View>
-                      </View>
-                      <View style={styles.cardsContainer}>
-                        <Image source={require(
-                          // @ts-ignore
-                          "./assets/cards.png")} style={styles.cards} />
-                        <Text style={styles.count}>+5 Comments</Text>
-                      </View>
+                    <View style={styles.cardsContainer}>
+                      <Image source={require(
+                        // @ts-ignore
+                        "./assets/cards.png")} style={styles.cards} />
+                      <Text style={styles.count}>+5 comments</Text>
                     </View>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.centerBox}>
-                <TouchableOpacity onPress={() => navigation.navigate("productScreen", { product: productsList[2] })}>
-                  
-                    <ImageBackground source={{ uri: productsList[2]?.images[2]?.original }} style={styles.box}>
-                      <View style={styles.courseTop}>
-                        <Pressable style={styles.heartIconContainer}>
-                          <Image
-                            // @ts-ignore
-                            source={require("./assets/heartIcon.png")}
-                            style={styles.heartIcon}
-                          />
-                        </Pressable>
-                        <Text style={styles.rateLabel}>4.7</Text>
-                      </View>
-                      <View style={styles.imageBox}>
-                        <Image source={require(
-                          // @ts-ignore
-                          "./assets/edit.png")} style={styles.editImg} />
-                      </View>
-                    </ImageBackground>
-                    <View style={styles.boxBottom}>
-                      <View style={styles.nameContainer}>
-                        <Text style={styles.courseName}>{productsList[2]?.title}</Text>
-                        <View style={styles.nameContainer}>
-                          <Text style={{ fontSize: 8, color: "#7C7C7C" }}>1.3mi </Text>
-                          <Image source={require(
-                            // @ts-ignore
-                            "./assets/loc.png")} style={styles.loc} />
-                        </View>
-                      </View>
-                      <View style={styles.cardsContainer}>
-                        <Image source={require(
-                          // @ts-ignore
-                          "./assets/cards.png")} style={styles.cards} />
-                        <Text style={styles.count}>+5 Comments</Text>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => navigation.navigate("productScreen", { product: productsList[3] })}>
+                  </View>
+                </TouchableOpacity>
+              </View>
+               }) }
 
-                    <ImageBackground source={{ uri: productsList[3]?.images[3]?.original }} style={styles.box}>
-                      <View style={styles.courseTop}>
-                        <Pressable style={styles.heartIconContainer}>
-                          <Image
-                            // @ts-ignore
-                            source={require("./assets/heartIcon.png")}
-                            style={styles.heartIcon}
-                          />
-                        </Pressable>
-                        <Text style={styles.rateLabel}>4.7</Text>
-                      </View>
-                      <View style={styles.imageBox}>
-                        <Image source={require(
-                          // @ts-ignore
-                          "./assets/edit.png")} style={styles.editImg} />
-                      </View>
-                    </ImageBackground>
-                    <View style={[styles.boxBottom, styles.ml10]}>
-                      <View style={styles.nameContainer}>
-                        <Text style={styles.courseName}>{productsList[3]?.title}</Text>
-                        <View style={styles.nameContainer}>
-                          <Text style={{ fontSize: 8, color: "#7C7C7C" }}>1.3mi </Text>
-                          <Image source={require(
-                            // @ts-ignore
-                            "./assets/loc.png")} style={styles.loc} />
-                        </View>
-                      </View>
-                      <View style={styles.cardsContainer}>
-                        <Image source={require(
-                          // @ts-ignore
-                          "./assets/cards.png")} style={styles.cards} />
-                        <Text style={styles.count}>+5 Comments</Text>
-                      </View>
-                    </View>
-                 </TouchableOpacity>
-                </View>
               </View>
           }
 
@@ -299,6 +243,7 @@ const styles = StyleSheet.create({
     width: "110%",
   },
   searchContainer: { backgroundColor: "#f1f1f1" },
+  wrapper:{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', paddingHorizontal: '4%'},
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -330,10 +275,10 @@ const styles = StyleSheet.create({
     marginVertical: 10
   },
   title: { fontSize: 24, fontWeight: "bold", marginLeft: 20, marginBottom: 20, marginTop: 10 },
-  box: { height: 167, width: 145, borderRadius: 10, alignItems: "center", justifyContent: "center" },
+  box: { height: 167, width: 145, alignItems: "center", justifyContent: "flex-start", borderRadius: 10, overflow: 'hidden' },
   imageBox: { height: 140, alignItems: "center", justifyContent: "center" },
   editImg: { marginBottom: 15, height: 32, width: 32, resizeMode: "contain" },
-  centerBox: { flexDirection: "row", justifyContent: "space-around", alignItems: "center", paddingHorizontal: 10 },
+  centerBox: {},
   courseTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%", paddingHorizontal: 15, marginTop: 10 },
   rateLabel: { fontSize: 7, paddingHorizontal: 5, backgroundColor: "#FFD500", borderRadius: 5 },
   circle: { resizeMode: "contain", height: 24, width: 24, marginTop: 5 },

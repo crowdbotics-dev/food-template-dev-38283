@@ -20,6 +20,8 @@ const Welcome = ({ navigation }) => {
     }
   }
 
+
+
   useEffect(() => {
     checkAuth();
   }, [])
@@ -35,7 +37,7 @@ const Welcome = ({ navigation }) => {
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non at sed.
       </Text>
       <View style={styles.buttonContainer}>
-        <Button buttonText="Sign Up" style={styles.button} onPress={() => navigation.navigate("login")} />
+        <Button buttonText="Sign Up" style={styles.button} onPress={() => navigation.navigate("login", {route: true})} />
         <Button
           buttonText="Login"
           style={styles.button}
@@ -57,7 +59,7 @@ const styles = StyleSheet.create({
     height: windowHeight
   },
   heading: {
-    marginTop: 20,
+    marginTop: "20%",
     fontSize: 30,
     fontWeight: "bold",
     color: "#000",

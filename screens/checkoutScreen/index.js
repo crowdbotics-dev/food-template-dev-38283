@@ -12,7 +12,7 @@ const CheckoutScreen = ({ navigation, route }) => {
   const [addressError, setAddressError] = useState("");
   const [currentAddress, setCurrentAddress] = useState({})
   const dispatch = useDispatch();
-  const [shippingCharge, setShippingCharge] =  useState({
+  const [shippingCharge, setShippingCharge] = useState({
     currency: "USD",
     excl_tax: "0.0",
     tax: "0.0"
@@ -43,6 +43,7 @@ const CheckoutScreen = ({ navigation, route }) => {
 
   const handleCheckout = async () => {
     setIsLoading(true);
+
     const obj = {
       basket: basketData?.url,
       guest_email: "foo@example.com",
@@ -58,21 +59,22 @@ const CheckoutScreen = ({ navigation, route }) => {
       }
     }
     try {
-      await dispatch(startCheckout(obj)).then((res) => {
-        setIsLoading(false);
-        navigation.navigate('orderReceiveScreen', {basketData})
-      }).catch((error) => {console.log("Error: ", error);
-      setIsLoading(false);
-    })
+        await dispatch(startCheckout(obj)).then((res) => {
+          setIsLoading(false);
+          navigation.navigate('orderStatusScreen')
+        }).catch((error) => {
+          console.log("Error: ", error);
+          setIsLoading(false);
+        })
     } catch (error) {
       setIsLoading(false);
       console.log("Error: ", error)
     }
   }
-    
+
 
   const handleGetUser = async () => {
-    await dispatch(getUserInfo()).then((res) => {}).catch((err) => console.log(err))
+    await dispatch(getUserInfo()).then((res) => { }).catch((err) => console.log(err))
   }
 
 
@@ -80,6 +82,7 @@ const CheckoutScreen = ({ navigation, route }) => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
     if (route?.params?.basketData) {
       const { line_details } = route?.params?.basketData
+      const {basketData} = route?.params;
       setCartProducts(line_details);
       setBasketData(route?.params?.basketData)
       setShippingCharge({ ...shippingCharge, currency: basketData.currency, excl_tax: basketData.delivery_fee, tax: basketData.total_tax })
@@ -89,8 +92,9 @@ const CheckoutScreen = ({ navigation, route }) => {
     }
     handleGetAddress();
     handleGetUser();
+    
   }, [route?.params]);
-
+  
   return (
     <ScrollView style={[styles.container]} showsVerticalScrollIndicator={false}>
       {isLoading && <Loader></Loader>}
@@ -110,7 +114,7 @@ const CheckoutScreen = ({ navigation, route }) => {
       </View>
       <View style={styles.deliveryContainer}>
         <Text style={styles.deliveryHeading}>Delivery to</Text>
-        <Text style={styles.receiver}>{user?.first_name + " " + user?.last_name || user?.username}</Text>
+        <Text style={styles.receiver}>{user?.first_name ? user?.first_name + " " + user?.last_name : user?.username}</Text>
         <Text style={styles.address}>{currentAddress?.line1}</Text>
       </View>
       <View style={styles.orderContainer}>

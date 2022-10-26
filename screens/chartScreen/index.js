@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, View, Image, ScrollView, TouchableHighlight, Pressable, Alert } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
-import { getBasket, removeFromBasket } from "../../store";
+import { addToBasket, cartCount, cartCounts, getBasket, removeFromBasket } from "../../store";
 import Loader from "../../components/Loader";
 const ChartScreen = ({ navigation }) => {
   const [quantity, setQuantity] = useState(1);
@@ -11,11 +11,37 @@ const ChartScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
+
+  const cartProduct = async () => {
+    await cartCount().then((res) => dispatch(cartCounts(res))).catch((err) => console.log("Error: ", err));
+  }
+
+
+  const handleConfirmation = async (id, infoId) => {
+    setIsLoading(true)
+    const data = {
+      quantity,
+      url: id,
+      partner_id: 4 || infoId,
+    }
+    try {
+      await dispatch(addToBasket(data)).then(async (res) => {
+        setIsLoading(false);
+        await cartProduct().then((res) => navigation.navigate("chartScreen"));
+      }).catch((error) => { console.log("error: ", error); setIsLoading(false) })
+    } catch (error) {
+      console.log("ERROR: ", error)
+      setIsLoading(false)
+    }
+  };
+
+  
   const increment = () => {
     setQuantity(quantity + 1);
   };
   const decrement = () => {
     if (quantity > 1) {
+     
       setQuantity(quantity - 1);
     } else {
       setQuantity(1);
@@ -86,11 +112,11 @@ const ChartScreen = ({ navigation }) => {
           <Text style={styles.promoText}>Order details</Text>
           <Image source={require("./assets/basket.png")} style={styles.filter} />
         </View>
-        {cartProducts && cartProducts.map((item, index) =>
+        {cartProducts?.length ? cartProducts.map((item, index) =>
           <Swipeable renderRightActions={() => leftSwipe(item.url)} key={index}>
             <View style={styles.productContainer} >
               <View>
-                <Image source={{ uri: "https://cdnimg.webstaurantstore.com/uploads/blog/2019/3/blog-types-pizza_in-blog-8.jpg" || item?.images[0].original }} style={styles.productImage} />
+                <Image source={{ uri: item?.product?.images[0].original || "https://cdnimg.webstaurantstore.com/uploads/blog/2019/3/blog-types-pizza_in-blog-8.jpg"}} style={styles.productImage} />
               </View>
               <View style={styles.productDetails}>
                 <Text style={styles.productName}>{item?.product?.title}</Text>
@@ -118,7 +144,7 @@ const ChartScreen = ({ navigation }) => {
                   <Text style={styles.counterText}>{item?.quantity}</Text>
                   <Pressable
                     style={[styles.counterBtn, styles.increment]}
-                    onPress={() => increment()}>
+                    onPress={() => handleConfirmation(item?.id, item?.product?.partner_info?.id)}>
                     <Image
                       source={require("./assets/plusIcon.png")}
                       style={styles.icon}
@@ -128,7 +154,7 @@ const ChartScreen = ({ navigation }) => {
               </View>
             </View>
           </Swipeable>
-        )}
+        ) : <Text>""</Text>}
       </ScrollView>
       <View style={styles.cardContainer}>
         <View style={styles.ratingsStar}>

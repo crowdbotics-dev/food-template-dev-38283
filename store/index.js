@@ -84,6 +84,14 @@ export const addUserAddress = createAsyncThunk(
   }
 );
 
+export const deleteUserAddress = createAsyncThunk(
+  "ecommerce/deleteUserAddress",
+  async (payload) => {
+    const response = await api.deleteUserAddress(payload);
+    return response.data;
+  }
+);
+
 
 export const removeFromBasket = createAsyncThunk(
   "ecommerce/removeFromBasket",
@@ -278,6 +286,21 @@ const ecommerceSlice = createSlice({
       state.api.loading = "idle";
     },
     [addUserAddress.rejected]: (state, action) => {
+      if (state.api.loading === "pending") {
+        state.api.error = action.error;
+        state.api.loading = "idle";
+      }
+    },
+
+    [deleteUserAddress.pending]: (state) => {
+      if (state.api.loading === "idle") {
+        state.api.loading = "pending";
+      }
+    },
+    [deleteUserAddress.fulfilled]: (state, action) => {
+      state.api.loading = "idle";
+    },
+    [deleteUserAddress.rejected]: (state, action) => {
       if (state.api.loading === "pending") {
         state.api.error = action.error;
         state.api.loading = "idle";
