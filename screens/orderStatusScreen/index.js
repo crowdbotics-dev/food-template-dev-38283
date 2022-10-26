@@ -1,7 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { Text, StyleSheet, View, Image, TouchableHighlight, ScrollView, TextInput } from "react-native";
-const OrderStatusScreen = () => {
+import { Text, StyleSheet, View, Image, TouchableHighlight, ScrollView, TextInput, Pressable } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { getOrderList } from "../../store";
+const OrderStatusScreen = ({ navigation }) => {
+    const dispatch = useDispatch();
     const [orderStatus, setOrderStatus] = useState([]);
+    const [currentOrder, setCurrentOrder] = useState({});
+    const [orderDate, setOrderDate] = useState("");
+    const [orderTime, setOrderTime] = useState("");
+    const orders = useSelector((state) => state?.ecommerce?.orderList);
+
+
+    const convertFrom24To12Format = (time24) => {
+        const [sHours, minutes] = time24.match(/([0-9]{1,2}):([0-9]{2})/).slice(1);
+        const hours = +sHours % 12 || 12;
+        return `${hours}:${minutes}`;
+      }
+
+    useEffect(() => {
+        setCurrentOrder(orders[0]);
+        if (orders[0]?.date_placed) {
+            const splitDate = orders[0]?.date_placed?.split("T");
+            const date = new Date(splitDate[0]);
+            const month = date.toLocaleString('default', { month: 'long' });
+            const exactDate = month.split(" ");
+            const convertedTime = convertFrom24To12Format(splitDate[1])
+            setOrderTime(convertedTime);
+            setOrderDate(exactDate[0] + ", " + exactDate[1] + " " + exactDate[2])
+        }
+    }, [orders])
+
+    useEffect(() => {
+        dispatch(getOrderList());
+    }, [])
 
     useEffect(() => {
         setOrderStatus([{
@@ -43,14 +74,17 @@ const OrderStatusScreen = () => {
                 style={styles.progressImageStyle}
             />
             <View style={styles.inputHeadings}>
-                <Text style={styles.inputText}>Order ID: 1236546</Text>
-                <Text style={[styles.inputText, { fontWeight: "bold" }]}>$54.00</Text>
+                <Text style={styles.inputText}>Order ID: {currentOrder?.number}</Text>
+                <Text style={[styles.inputText, { fontWeight: "bold" }]}>{currentOrder?.total_incl_tax} {currentOrder?.currency}</Text>
             </View>
-            <Text style={styles.dateText}>Mon, 29 Sep</Text>
+            <Text style={styles.dateText}>{orderDate ? orderDate : ""}</Text>
 
             <View style={[styles.orderTime]}>
                 <Text style={styles.inputText}>ETA: 30 Min</Text>
-                <Text style={[styles.inputText, { color: "#EA4335" }]}>Details</Text>
+                <Pressable onPress={() => navigation.navigate("orderDetailsScreen", { currentOrder, orderDate, orderTime })}>
+                    <Text style={[styles.inputText, { color: "#EA4335" }]}>Details</Text>
+                </Pressable>
+
             </View>
 
             {orderStatus && orderStatus.map((order, index) =>
@@ -60,10 +94,10 @@ const OrderStatusScreen = () => {
                         source={index == orderStatus.length - 1 ? require("./assets/dot.png") : order.currentStatus ? require("./assets/statusbar1.png") : require("./assets/statusbar2.png")}
                         style={index == orderStatus.length - 1 ? styles.dot : styles.statusBar}
                     />
-                    <View style={{paddingLeft: 5}}>
+                    <View style={{ paddingLeft: 5 }}>
                         <View style={styles.orderStatusContainer}>
                             <Text style={[styles.statusHeading, { color: !order.currentStatus ? "#e7e7e7" : "#2A2B2E" }]}>{order.name}</Text>
-                            <Text style={[styles.statusHeading, { color: !order.currentStatus ? "#e7e7e7" : "#2A2B2E", textAlign: 'right'}]}>{order.time}</Text>
+                            <Text style={[styles.statusHeading, { color: !order.currentStatus ? "#e7e7e7" : "#2A2B2E", textAlign: 'right' }]}>{orderTime}</Text>
                         </View>
                         <Text style={[styles.statusText, { color: !order.currentStatus ? "#e7e7e7" : "#2A2B2E" }]}>{order.status}</Text>
                     </View>
@@ -72,15 +106,11 @@ const OrderStatusScreen = () => {
 
             <View style={styles.emailContainer}>
                 <Text style={styles.mr10}>Full Name</Text>
-                <Input
-                    placeholder='Enter'
-                />
+                <Text style={styles.text}>{currentOrder?.shipping_address?.first_name + " " + currentOrder?.shipping_address?.last_name}</Text>
             </View>
             <View>
                 <Text style={styles.mr10}>Delivery address</Text>
-                <Input
-                    placeholder='8th Street, San Francisco'
-                />
+                <Text style={styles.text}>{currentOrder?.shipping_address?.line1}</Text>
             </View>
 
             <Button buttonText={"Live tracking"} />
@@ -126,9 +156,9 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 8,
         marginTop: -2, marginBottom: 4,
-        
+
     },
-    statusHeading: { fontSize: 12, width: "50%"},
+    statusHeading: { fontSize: 12, width: "50%" },
     statusText: { paddingHorizontal: 10, fontSize: 10 },
     mainContainer: {
         justifyContent: "flex-start",
@@ -138,7 +168,7 @@ const styles = StyleSheet.create({
         marginBottom: 5
     },
     statusBar: { height: 59, width: 12, resizeMode: "contain", },
-    dot: { height: 12, width: 12, resizeMode: "contain",  opacity: 0.25},
+    dot: { height: 12, width: 12, resizeMode: "contain", opacity: 0.25 },
     emailContainer: {
         marginTop: 20,
         marginBottom: 10
@@ -147,6 +177,16 @@ const styles = StyleSheet.create({
         marginLeft: 15,
         marginBottom: 10
     },
+    text: {
+        backgroundColor: "rgba(217, 217, 217, 0.2)",
+        borderColor: "#C4C4C4",
+        color: "#000",
+        borderRadius: 10,
+        fontSize: 14,
+        borderWidth: 1,
+        paddingHorizontal: 10,
+        paddingVertical: 15
+    }
 });
 
 export default OrderStatusScreen;

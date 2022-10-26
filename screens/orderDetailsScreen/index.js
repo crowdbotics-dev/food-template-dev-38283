@@ -1,18 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, View, TouchableHighlight, Image, ScrollView } from "react-native";
 
-const OrderDetailScreen = () => {
-
+const OrderDetailScreen = ({navigation, route}) => {
+const [orderDetails, setOrderDetails] = useState({})
+const [orderDate, setOrderDate] = useState("");
+const [orderTime, setOrderTime] = useState("");
+  useEffect(() => {
+   
+    if (route?.params?.currentOrder) {
+      const {currentOrder, orderDate, orderTime} = route?.params;
+      setOrderDetails(currentOrder);
+      setOrderDate(orderDate)
+      setOrderTime(orderTime)
+    }
+  }, [route?.params]);
   return (
     <ScrollView style={[styles.container]} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
         <Text style={styles.heading}>Order details</Text>
-        <Text style={styles.inputText}>Mon, 29 Sep</Text>
-        <Text style={styles.inputText}>Order ID: 1236546</Text>
+        <Text style={styles.inputText}>{orderDate}</Text>
+        <Text style={styles.inputText}>Order ID: #{orderDetails?.number}</Text>
       </View>
 
       <View style={styles.subHeader}>
-        <Text style={styles.orderName}>Order name</Text>
+        <Text style={styles.orderName}>#{orderDetails?.number}</Text>
         <View style={styles.mainContainer}>
           <Image
             // @ts-ignore
@@ -22,9 +33,9 @@ const OrderDetailScreen = () => {
           <View>
             <View style={styles.orderStatusContainer}>
               <Text style={styles.statusHeading}>Ready to Pickup</Text>
-              <Text style={[styles.statusHeading, styles.statusTime]}>12:00</Text>
+              <Text style={[styles.statusHeading, styles.statusTime]}>{orderTime}</Text>
             </View>
-            <Text style={styles.statusText}>Order ID 1236546 from Store</Text>
+            <Text style={styles.statusText}>Order ID {orderDetails?.number} from Store</Text>
           </View>
         </View>
       </View>
@@ -38,13 +49,13 @@ const OrderDetailScreen = () => {
           />
         </View>
 
-        <Text style={styles.orderTitle}>Order name</Text>
+        <Text style={styles.orderTitle}>{orderDetails?.number}</Text>
         <View style={styles.infoContainer}>
           <Text style={styles.orderInfo}>Additional info</Text>
-          <Text style={styles.orderPrice}>$54.00</Text>
+          <Text style={styles.orderPrice}>{orderDetails?.total_incl_tax} {orderDetails?.currency}</Text>
         </View>
         <View style={styles.customInfo}>
-          <Text style={styles.customTitle}>Customer name</Text>
+          <Text style={styles.customTitle}>{orderDetails?.shipping_address?.first_name + " " + orderDetails?.shipping_address?.last_name}</Text>
           <Text style={styles.addInfo}>Additional info</Text>
         </View>
 
@@ -60,7 +71,7 @@ const OrderDetailScreen = () => {
               <Text style={styles.subLocationText}>Food Location</Text>
             </View>
             <View style={styles.deliveryContainer}>
-              <Text style={styles.locationText}>4041 8th Street, San Francisco</Text>
+              <Text style={styles.locationText}>{orderDetails?.shipping_address?.line1}</Text>
               <Text style={styles.subLocationText}>Delivery Location</Text>
             </View>
 
@@ -68,7 +79,7 @@ const OrderDetailScreen = () => {
         </View>
       </View>
       <View style={styles.cardContainer}>
-        <DetailsCard />
+        <DetailsCard userName={orderDetails?.shipping_address?.first_name + " " + orderDetails?.shipping_address?.last_name}/>
         <Button buttonText="Close" />
       </View>
       
@@ -213,7 +224,7 @@ const btnStyles = StyleSheet.create({
 
 
 
-const DetailsCard = () => {
+const DetailsCard = ({userName}) => {
   return (
     <View style={detailsCardStyles.detailsCard}>
       <View style={detailsCardStyles.pricing}>
@@ -230,7 +241,7 @@ const DetailsCard = () => {
       </View>
       <View style={detailsCardStyles.pricing}>
         <Text style={detailsCardStyles.pricingText}>Card holder</Text>
-        <Text style={detailsCardStyles.pricingText}>Username</Text>
+        <Text style={detailsCardStyles.pricingText}>{userName}</Text>
       </View>
     </View>
   );

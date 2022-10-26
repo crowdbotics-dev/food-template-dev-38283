@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Text,
   View,
@@ -7,11 +7,24 @@ import {
   Dimensions,
   Pressable
 } from "react-native";
+import { getItem } from "../../store";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const Welcome = ({navigation}) => {
+const Welcome = ({ navigation }) => {
+  const checkAuth = async () => {
+    const token = await getItem("token")
+    if (token) {
+      navigation.replace('searchScreen')
+    }
+  }
+
+
+
+  useEffect(() => {
+    checkAuth();
+  }, [])
   return (
     <View style={styles.container}>
       <Image
@@ -24,7 +37,7 @@ const Welcome = ({navigation}) => {
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non at sed.
       </Text>
       <View style={styles.buttonContainer}>
-        <Button buttonText="Sign Up" style={styles.button} onPress={() => navigation.navigate("login")}/>
+        <Button buttonText="Sign Up" style={styles.button} onPress={() => navigation.navigate("login", {route: true})} />
         <Button
           buttonText="Login"
           style={styles.button}
@@ -32,6 +45,7 @@ const Welcome = ({navigation}) => {
           backgroundColor="#fff"
           textColor="#000"
           hideShadow
+          onPress={() => navigation.navigate("login")}
         />
       </View>
     </View>
@@ -45,7 +59,7 @@ const styles = StyleSheet.create({
     height: windowHeight
   },
   heading: {
-    marginTop: 20,
+    marginTop: "20%",
     fontSize: 30,
     fontWeight: "bold",
     color: "#000",

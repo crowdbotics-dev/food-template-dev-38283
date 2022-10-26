@@ -1,26 +1,45 @@
 // @ts-nocheck
-import React, { useState, useEffect } from "react";
+import Loader from "../../components/Loader";
+import React, { useState, useEffect, useContext } from "react";
 import { Text, View, StyleSheet, Image, Pressable, ScrollView, ImageBackground } from "react-native";
 import { RadioButton } from 'react-native-paper';
+import { addToBasket, cartCount, cartCounts } from "../../store";
+import { getPrice } from "../../store/apis";
+import { useDispatch } from "react-redux";
+import { GlobalOptionsContext } from "@options";
 
-const ProductDetails = () => {
+const ProductDetails = ({ navigation, route }) => {
+  const gOptions = useContext(GlobalOptionsContext);
+  const dispatch = useDispatch();
   const [checked, setChecked] = useState(false);
   const [checked2, setChecked2] = useState(true);
   const [checked3, setChecked3] = useState(false);
   const [checked4, setChecked4] = useState(false);
+  const [favorite, setFavorite] = useState(false);
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
-  useEffect(() => {
-    setProduct({
-      name: "Food name",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Facilisi urna ante sed aliquam. Ut nunc suscipit mi praesent nulla orci, viverra.",
-      price: 12.5,
-      discountedPrice: 10,
-      caption:
-        "Add toping"
+  const [isLoading, setIsLoading] = useState(false);
+  const [productPrice, setProductPrice] = useState(1);
+
+  const handlePrice = async (priceUrl) => {
+    setIsLoading(true)
+    await getPrice(priceUrl).then((res) => {
+      setProductPrice(res);
+      setIsLoading(false)
+    }).catch((err) => {
+      setIsLoading(false)
+      console.log("Error: ", err)
     });
+
+  }
+  useEffect(() => {
+    if (route?.params?.product) {
+     
+      setProduct(route?.params?.product)
+      handlePrice(route?.params?.product?.price);
+    }
   }, []);
+
   const increment = () => {
     setQuantity(quantity + 1);
   };
@@ -31,19 +50,44 @@ const ProductDetails = () => {
       setQuantity(1);
     }
   };
+
+  const cartProducts = async () => {
+    await cartCount().then((res) => dispatch(cartCounts(res))).catch((err) => console.log("Error: ", err));
+  }
+
+  const handleConfirmation = async id => {
+    setIsLoading(true)
+    const data = {
+      quantity,
+      url: id,
+      partner_id:  gOptions.partner_id,
+    }
+    try {
+      await dispatch(addToBasket(data)).then(async (res) => {
+        setIsLoading(false);
+        await cartProducts().then((res) => navigation.navigate("chartScreen"));
+      }).catch((error) => { console.log("error: ", error); setIsLoading(false) })
+    } catch (error) {
+      console.log("ERROR: ", error)
+      setIsLoading(false)
+    }
+  };
+
+  const imgUrl = product?.images?.length ? product?.images[0]?.original : "https://cdnimg.webstaurantstore.com/uploads/blog/2019/3/blog-types-pizza_in-blog-8.jpg"
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <ImageBackground source={require("./assets/background.png")} resizeMode="cover" style={styles.imageContainer}>
-        <Pressable style={styles.heartIconContainer}>
+      <ImageBackground source={{ uri: imgUrl }} resizeMode="cover" style={styles.imageContainer}>
+        <Pressable style={styles.heartIconContainer} onPress={() =>setFavorite(!favorite)}>
           <Image
-            source={require("./assets/heartIcon.png")}
+            source={favorite ? require("./assets/favoriteIcon.png") : require("./assets/heartIcon.png")}
             style={styles.heartIcon}
           />
         </Pressable>
       </ImageBackground>
+      {isLoading && <Loader></Loader>}
       <View style={styles.cardContainer}>
         <View style={styles.flexRow}>
-          <Text style={styles.title}>{product.name}</Text>
+          <Text style={styles.title}>{product?.title}</Text>
           <Text style={styles.ratingText}>4.7</Text>
         </View>
         <View style={styles.flexRow1}>
@@ -52,7 +96,7 @@ const ProductDetails = () => {
           </View>
           <Text style={styles.fnt12}>Free delivery</Text>
         </View>
-        <Text style={styles.description}>{product.description}</Text>
+        <Text style={styles.description}>{product?.description}</Text>
         <View style={styles.cardsContainer}>
           <Image source={require("./assets/cards.png")} style={styles.cards} />
           <Text style={styles.count}>+50 Comments</Text>
@@ -62,7 +106,7 @@ const ProductDetails = () => {
         <View style={styles.counterContainer}>
           <View style={styles.priceContainer}>
             <Text style={styles.priceText}>
-              ${product.discountedPrice && product.discountedPrice.toFixed(2)}
+              ${productPrice.incl_tax}
             </Text>
           </View>
           <View style={styles.counter}>
@@ -85,7 +129,7 @@ const ProductDetails = () => {
             </Pressable>
           </View>
         </View>
-        <Text style={styles.caption}>{product.caption}</Text>
+        <Text style={styles.caption}>{product?.caption || "Add toping"}</Text>
 
         <Pressable style={styles.pricing} onPress={() => setChecked(!checked)}>
           <Text style={styles.summaryText}>Lorem ipsum </Text>
@@ -147,7 +191,7 @@ const ProductDetails = () => {
           </View>
 
         </Pressable>
-        <Button buttonText="Add to chart" style={styles.button} />
+        <Button buttonText="Add to chart" style={styles.button} onPress={() => handleConfirmation(product?.id)} />
       </View>
     </ScrollView>
   );
@@ -262,7 +306,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     width: '90%',
     alignSelf: "center"
-    
+
   },
   greenCircle: {
     width: 18,
@@ -279,7 +323,7 @@ const styles = StyleSheet.create({
   fnt12: {
     fontSize: 12,
     marginLeft: 5,
-    color:"#7E7E7E"
+    color: "#7E7E7E"
   },
   bold: {
     fontWeight: "bold"
@@ -322,12 +366,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 5
-},
-heartIcon: {
+  },
+  heartIcon: {
     height: 20,
     width: 20,
     resizeMode: "contain"
-},
+  },
 });
 
 export default ProductDetails;

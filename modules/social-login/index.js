@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import {
   View,
   ImageBackground,
@@ -19,8 +19,9 @@ import { createStackNavigator } from "@react-navigation/stack"
 import { BACKGROUND_URL, LOGO_URL } from "./screens/constants.js"
 import { slice } from "./auth"
 import { styles } from "./screens/styles"
-import { SignInTab, SignupTab, Signup } from "./screens/loginsignup"
+import { SignInTab, SignupTab, SignUp, SignIn } from "./screens/loginsignup"
 import PasswordReset from "./screens/reset"
+import { getItem } from "../../store"
 
 
 const LoginTabBar = ({ navigation, state, descriptors }) => {
@@ -135,23 +136,25 @@ const LoginScreen = () => {
 
 const Stack = createStackNavigator();
 
-const LoginSignup = ({ navigation }) => {
+const LoginSignup = ({ navigation, route }) => {
+  const [initializeRoute, setInitialRoute] = useState("");
 
-  // const checkAuth = async () =>{
-  // // const token = await getItem("token")
-  //    if(token){
-  //     navigation.replace('storeList')
-  //    }
-  // }
-  
   useEffect(() => {
-    // checkAuth();
+    if (route?.params?.route) {
+      setInitialRoute(route?.params?.route)
+    }
+  }, [])
+
+  useEffect(() => {
+    setTimeout(() => {
+      setInitialRoute("")
+    }, 2000);
   }, [])
 
   return (
     <Stack.Navigator headerMode="none">
-      <Stack.Screen name="LoginScreen" component={Signup} />
-      <Stack.Screen name="PasswordReset" component={PasswordReset} />
+      <Stack.Screen name="LoginScreen" component={initializeRoute ? SignUp : SignIn} />
+      <Stack.Screen name="SignUpScreen" component={initializeRoute ? SignIn : SignUp} />
     </Stack.Navigator>
   );
 };
