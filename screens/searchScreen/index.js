@@ -21,16 +21,17 @@ const SearchScreen = ({ route, navigation }) => {
 
   const handleProducts = async () => {
     setIsLoading(true)
-    const products = await getProducts();
-    var productList = [];
-    let i = 0;
-    while (i < products.length) {
-      const product = await getProduct(products[i].url);
-      productList.push(product);
-      i += 1;
-    }
-    setProductsList(productList);
-    setIsLoading(false);
+    await getProducts().then(async (products) => {
+      var productList = [];
+      let i = 0;
+      while (i < products.length) {
+        const product = await getProduct(products[i].url);
+        productList.push(product);
+        i += 1;
+      }
+      setProductsList(productList);
+      setIsLoading(false);
+    }).catch((err) => { console.log("error: ", err); setIsLoading(false); });
   }
 
   const handleSearch = (text) => {
