@@ -1,16 +1,25 @@
-import React, { useEffect, useState } from "react";
+// @ts-nocheck
+import React, { useContext, useEffect, useState } from "react";
 import { Text, StyleSheet, View, Image, ScrollView, TouchableHighlight, Pressable, TextInput, LogBox } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserAddress, getUserInfo, startCheckout } from "../../store";
+import { addUserAddress, getUserInfo, startCheckout } from "../../store";
 import Loader from "../../components/Loader";
+import { modules } from "@modules";
+import { GlobalOptionsContext } from '@options';
 
 const CheckoutScreen = ({ navigation, route }) => {
+  const gOptions = useContext(GlobalOptionsContext)
+  const AddressAutoComplete = modules[0].value.navigator;
   const [cartProducts, setCartProducts] = useState([]);
   const [basketData, setBasketData] = useState({});
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false);
+  const [inputAddress, setInputAddress] = useState("");
   const [addressError, setAddressError] = useState("");
-  const [currentAddress, setCurrentAddress] = useState({})
+
+  const [addAddress, setAddAddress] = useState(false);
+  const [currentAddress, setCurrentAddress] = useState({});
+  const [defaultInputValue, setDefaultInputValue] = useState("");
   const dispatch = useDispatch();
   const [shippingCharge, setShippingCharge] = useState({
     currency: "USD",
@@ -19,31 +28,37 @@ const CheckoutScreen = ({ navigation, route }) => {
   });
 
 
-  // @ts-ignore
   const userInfo = useSelector(state => state?.ecommerce?.user);
-  const userAddress = useSelector(state => state?.ecommerce?.userAddress);
   useEffect(() => {
     setTimeout(() => {
       setUser(userInfo)
-      const resultLength = userAddress.length
-      setCurrentAddress(userAddress[resultLength - 1])
     }, 1000);
 
-  }, [userInfo, userAddress])
+  }, [userInfo])
 
-  const handleGetAddress = async () => {
-    setIsLoading(true)
-    await dispatch(getUserAddress()).then(async (res) => {
-      setIsLoading(false)
-    }).catch((err) => {
-      console.log("Error: ", err);
-      setIsLoading(false)
-    });
-  }
+
+
+  const handleAddAddresses = async () => {
+    if (addAddress) {
+      await dispatch(addUserAddress({
+        title: gOptions.title,
+        first_name: user?.first_name,
+        last_name: user?.last_name,
+        line1: currentAddress.formatted_address,
+        line4: currentAddress.city,
+        state: currentAddress.state,
+        is_default_for_shipping: true,
+        is_default_for_billing: true,
+        country: gOptions.oscar_countries,
+        lat: currentAddress.lat,
+        lng: currentAddress.lng,
+      })).then((res) => {}).catch((err) => {
+        console.log("Error: ", err)
+      })
+    }
+  };
 
   const handleCheckout = async () => {
-    setIsLoading(true);
-
     const obj = {
       basket: basketData?.url,
       guest_email: "foo@example.com",
@@ -58,7 +73,11 @@ const CheckoutScreen = ({ navigation, route }) => {
         }
       }
     }
+
     try {
+      if(currentAddress?.state && currentAddress?.line4){
+        await handleAddAddresses();
+        setIsLoading(true);
         await dispatch(startCheckout(obj)).then((res) => {
           setIsLoading(false);
           navigation.navigate('orderStatusScreen')
@@ -66,6 +85,10 @@ const CheckoutScreen = ({ navigation, route }) => {
           console.log("Error: ", error);
           setIsLoading(false);
         })
+      }else{
+        setAddressError("Please select address first");
+      }
+     
     } catch (error) {
       setIsLoading(false);
       console.log("Error: ", error)
@@ -82,32 +105,86 @@ const CheckoutScreen = ({ navigation, route }) => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
     if (route?.params?.basketData) {
       const { line_details } = route?.params?.basketData
-      const {basketData} = route?.params;
+      const { basketData } = route?.params;
       setCartProducts(line_details);
       setBasketData(route?.params?.basketData)
       setShippingCharge({ ...shippingCharge, currency: basketData.currency, excl_tax: basketData.delivery_fee, tax: basketData.total_tax })
     }
     if (route?.params?.currentAddress) {
-      setCurrentAddress(route?.params?.currentAddress)
+      const { currentAddress } = route?.params;
+      setCurrentAddress({
+        title	:	currentAddress.title,
+        first_name	:	currentAddress.first_name,
+        last_name	:	currentAddress.last_name,
+        line1	:	currentAddress.line1,
+        line2	:	currentAddress.line2,
+        line3	:	currentAddress.line3,
+        line4	:	currentAddress.line4,
+        state	:	currentAddress.state,
+        postcode	:	currentAddress.postcode,
+        phone_number	:	currentAddress.phone_number,
+        notes	:	currentAddress.notes,
+        is_default_for_shipping	:	currentAddress.is_default_for_shipping,
+        is_default_for_billing	:	currentAddress.is_default_for_billing,
+        country	:	currentAddress.country,
+        lat	:	currentAddress.lat,
+        lng	:	currentAddress.lng
+      });
+      setDefaultInputValue(currentAddress?.line1);
+      setAddAddress(false)
     }
-    handleGetAddress();
+
     handleGetUser();
-    
   }, [route?.params]);
-  
+
+  const handleSelectAddress = (data, address) => {
+    setInputAddress("")
+    setAddressError("")
+    setDefaultInputValue(data.description);
+    const arr = address.formatted_address.split(',')
+    const reverse = arr.reverse()
+    setCurrentAddress({
+      title	:	gOptions.title,
+      first_name	:	user.first_name,
+      last_name	:	user.last_name,
+      line1	:	address.formatted_address,
+      line4	:	reverse[2],
+      state	:	reverse[1],
+      is_default_for_shipping	:	true,
+      is_default_for_billing	:	true,
+      country	:	gOptions.oscar_countries,
+      lat: address.geometry.location.lat,
+      lng: address.geometry.location.lng      
+    });
+    setAddAddress(true);
+  }
+
+  const handleChangeText = (text) => {
+    setInputAddress(text);
+    setAddressError("")
+  }
+
   return (
-    <ScrollView style={[styles.container]} showsVerticalScrollIndicator={false}>
+    <View style={[styles.container]}>
       {isLoading && <Loader></Loader>}
       <View style={styles.headTextContainer}>
         <Text style={styles.headText}>Address</Text>
-        <Text style={styles.editText}>Edit</Text>
+        <Pressable onPress={() => navigation.navigate("addressScreen")}>
+          <Text style={styles.editText}>Edit</Text>
+        </Pressable>
+
       </View>
 
-      <Pressable style={styles.autocomplete} onPress={() => navigation.navigate("addressScreen")}>
-        <Text>{currentAddress?.line1 || "Select Address"}</Text>
-        <Image source={require("./assets/map.png")} style={styles.mr10} />
-      </Pressable>
-      <Text style={styles.errorStyle}>{addressError}</Text>
+      <View style={[styles.autocomplete, { width: "100%", height: inputAddress ? "50%" : 50, backgroundColor: "#fff" }]}>
+        <AddressAutoComplete onAddressSelect={handleSelectAddress} onChangeText={handleChangeText} defaultInputValue={defaultInputValue} />
+        <Pressable onPress={() => navigation.navigate("addressScreen")}>
+          <Image source={require("./assets/map.png")} style={styles.mr10} />
+        </Pressable>
+      </View>
+
+
+
+      <Text style={{color: "#f77474"}}>{addressError}</Text>
 
       <View style={styles.mapContainer}>
         <Image source={require("./assets/mapIcon.png")} style={styles.mapIcon} />
@@ -115,19 +192,20 @@ const CheckoutScreen = ({ navigation, route }) => {
       <View style={styles.deliveryContainer}>
         <Text style={styles.deliveryHeading}>Delivery to</Text>
         <Text style={styles.receiver}>{user?.first_name ? user?.first_name + " " + user?.last_name : user?.username}</Text>
-        <Text style={styles.address}>{currentAddress?.line1}</Text>
+        <Text style={styles.address}>{currentAddress?.line1 || currentAddress?.formatted_address}</Text>
       </View>
       <View style={styles.orderContainer}>
         <Text style={styles.orderHeading}>Your order</Text>
         {
           cartProducts && cartProducts.map((item, index) =>
-            <View style={styles.subContainer} key={index}>
+
+            <ScrollView style={styles.subContainer} key={index}>
               <View style={styles.headTextContainer}>
                 <Text><Text>{item?.quantity}x</Text>{" "}{item?.product?.title}</Text>
                 <Text style={styles.orderPrice}>${item?.price_incl_tax}</Text>
               </View>
               <Text style={styles.orderEdit}>Edit</Text>
-            </View>
+            </ScrollView>
           )}
       </View>
 
@@ -135,13 +213,17 @@ const CheckoutScreen = ({ navigation, route }) => {
         <View style={styles.pricing}>
           <Text style={styles.subtotalText}>Subtotal:</Text>
           <Text style={styles.subtotalText}>
-            {basketData?.total_excl_tax_excl_discounts}{" "}{basketData?.currency}
+            {basketData?.
+
+              total_excl_tax_excl_discounts}{" "}{basketData?.currency}
           </Text>
         </View>
         <View style={styles.pricing}>
           <Text style={styles.deliveryText}>Fee & delivery</Text>
           <Text style={styles.subtotalPrice}>
-            {basketData?.delivery_fee}{" "}{basketData?.currency}
+            {basketData?.
+
+              delivery_fee}{" "}{basketData?.currency}
           </Text>
         </View>
 
@@ -155,11 +237,13 @@ const CheckoutScreen = ({ navigation, route }) => {
 
         <View style={[styles.headTextContainer, { paddingHorizontal: 10 }]}>
           <Text style={styles.totalText}>Total</Text>
-          <Text style={styles.totalPrice}>{basketData?.total}{" "}{basketData?.currency}</Text>
+          <Text style={styles.totalPrice}>{basketData?.
+
+            total}{" "}{basketData?.currency}</Text>
         </View>
       </View>
       <Button buttonText={"Order"} onPress={() => handleCheckout()} />
-    </ScrollView>
+    </View>
   );
 };
 
@@ -178,17 +262,16 @@ const styles = StyleSheet.create({
   autocomplete: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
     borderColor: "#F0F2F7",
     borderWidth: 1, borderRadius: 10,
-    paddingVertical: 10,
-    paddingLeft: 10
   },
   mr10: {
     marginRight: 10,
     height: 22,
     width: 22,
-    resizeMode: "contain"
+    resizeMode: "contain",
+    marginTop: 10
   },
   headText: {
     marginLeft: 10,

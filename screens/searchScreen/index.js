@@ -26,8 +26,6 @@ const SearchScreen = ({ route, navigation }) => {
     let i = 0;
     while (i < products.length) {
       const product = await getProduct(products[i].url);
-      const availability = await productAvailability(product.id);
-      product.availability_status = availability
       productList.push(product);
       i += 1;
     }

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect, useState } from "react";
 import {
     Text,
@@ -8,22 +9,26 @@ import {
     Pressable,
     ScrollView
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserInfo } from "../../store";
 
 const AccountScreen = () => {
-    const [user, setUser] = useState({});
-    const [accountNumber, setAccountNumber] = useState("");
-    const [confirmAccountNumber, setConfirmAccountNumber] = useState("");
-    const [routingNumber, setRoutingNumber] = useState("");
+    const dispatch = useDispatch();
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [userAddress, setUserAddress] = useState("");
 
     const userInfo = useSelector(state => state?.ecommerce?.user);
 
+    const handleGetUser = async () => {
+        await dispatch(getUserInfo()).then((res) => { }).catch((err) => console.log(err))
+    }
 
     useEffect(() => {
-        setTimeout(() => {
-            setUser(userInfo)
-        }, 1000);
-    }, [userInfo])
+        if (!userInfo) {
+            handleGetUser()
+        }
+    }, [])
 
 
     return (
@@ -31,8 +36,8 @@ const AccountScreen = () => {
             <ScrollView>
                 <View style={styles.profileContainer}>
                     <Image source={require("./assets/profilePicture.png")} style={styles.profilePicture} />
-                    <Text style={styles.profileName}>{user?.username}</Text>
-                    <Text style={styles.profilemail}>{user?.email}</Text>
+                    <Text style={styles.profileName}>{userInfo?.username}</Text>
+                    <Text style={styles.profilemail}>{userInfo?.email}</Text>
                 </View>
 
                 <View style={[styles.accountHeadings]}>
@@ -45,8 +50,8 @@ const AccountScreen = () => {
                         <Text style={styles.inputText}>First name</Text>
                         <TextInput
                             style={styles.input}
-                            onChangeText={(text) => setAccountNumber(text)}
-                            value={user?.first_name}
+                            onChangeText={(text) => setFirstName(text)}
+                            value={userInfo?.first_name}
                             placeholder="Enter"
                             placeholderTextColor="#000"
                             autoCapitalize="none"
@@ -58,8 +63,8 @@ const AccountScreen = () => {
                         <Text style={styles.inputText}>Last Name</Text>
                         <TextInput
                             style={styles.input}
-                            onChangeText={(text) => setConfirmAccountNumber(text)}
-                            value={user?.last_name}
+                            onChangeText={(text) => setLastName(text)}
+                            value={userInfo?.last_name}
                             placeholder="Enter"
                             placeholderTextColor="#000"
                             autoCapitalize="none"
@@ -71,7 +76,7 @@ const AccountScreen = () => {
                         <Text style={styles.inputText}>Address 1</Text>
                         <TextInput
                             style={styles.input}
-                            onChangeText={(text) => setRoutingNumber(text)}
+                            onChangeText={(text) => setUserAddress(text)}
                             placeholder="Enter"
                             placeholderTextColor="#000"
                             autoCapitalize="none"

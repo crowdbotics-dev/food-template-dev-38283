@@ -3,7 +3,7 @@ import Loader from "../../components/Loader";
 import React, { useState, useEffect, useContext } from "react";
 import { Text, View, StyleSheet, Image, Pressable, ScrollView, ImageBackground } from "react-native";
 import { RadioButton } from 'react-native-paper';
-import { addToBasket, cartCount, cartCounts } from "../../store";
+import { addToBasket } from "../../store";
 import { getPrice } from "../../store/apis";
 import { useDispatch } from "react-redux";
 import { GlobalOptionsContext } from "@options";
@@ -51,9 +51,7 @@ const ProductDetails = ({ navigation, route }) => {
     }
   };
 
-  const cartProducts = async () => {
-    await cartCount().then((res) => dispatch(cartCounts(res))).catch((err) => console.log("Error: ", err));
-  }
+
 
   const handleConfirmation = async id => {
     setIsLoading(true)
@@ -65,7 +63,7 @@ const ProductDetails = ({ navigation, route }) => {
     try {
       await dispatch(addToBasket(data)).then(async (res) => {
         setIsLoading(false);
-        await cartProducts().then((res) => navigation.navigate("chartScreen"));
+        navigation.navigate("chartScreen")
       }).catch((error) => { console.log("error: ", error); setIsLoading(false) })
     } catch (error) {
       console.log("ERROR: ", error)

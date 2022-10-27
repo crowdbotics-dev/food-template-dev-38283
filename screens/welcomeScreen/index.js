@@ -16,7 +16,7 @@ const Welcome = ({ navigation }) => {
   const checkAuth = async () => {
     const token = await getItem("token")
     if (token) {
-      navigation.replace('searchScreen')
+      navigation.replace('homeScreen')
     }
   }
 

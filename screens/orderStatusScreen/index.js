@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, View, Image, TouchableHighlight, ScrollView, TextInput, Pressable } from "react-native";
 import { useDispatch, useSelector } from "react-redux";

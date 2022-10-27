@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, View, TouchableHighlight, Image, ScrollView } from "react-native";
 
