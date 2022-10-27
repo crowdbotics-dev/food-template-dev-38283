@@ -9,20 +9,17 @@ const AddressScreen = ({ navigation, route }) => {
   const [userAddresses, setUserAddresses] = useState([]);
   const [currentAddress, setCurrentAddress] = useState({})
   const [isLoading, setIsLoading] = useState(false);
-
+  const [searchedAddress, setSearchedAddress] = useState([]);
   const userAddress = useSelector(state => state?.ecommerce?.userAddress);
 
   useEffect(() => {
     setIsLoading(true)
-    setTimeout(() => {
-      const resultLength = userAddress.length
-      setUserAddresses(userAddress);
-      setCurrentAddress(userAddress[resultLength - 1])
-      setIsLoading(false)
-    }, 1000);
-
+    const resultLength = userAddress.length
+    setUserAddresses(userAddress);
+    setSearchedAddress(userAddress)
+    setCurrentAddress(userAddress[resultLength - 1])
+    setIsLoading(false)
   }, [userAddress])
-
 
 
   const updateCurrentAddress = (address) => {
@@ -44,6 +41,23 @@ const AddressScreen = ({ navigation, route }) => {
     })
   }
 
+
+  const handleSearch = async (text) => {
+    if (!text) {
+      setUserAddresses(searchedAddress)
+    } else {
+      const filterList = userAddresses.filter(element => element.line1.toLowerCase().includes(text.toLowerCase()));
+      setUserAddresses(filterList);
+    }
+  }
+
+  const getUserAddresses = () => {
+    dispatch(getUserAddress()).then((res) => { }).catch((err) => console.log("Error: ", err))
+  }
+  useEffect(() => {
+    getUserAddresses();
+  }, [])
+
   return (
     <ScrollView style={[styles.container]} showsVerticalScrollIndicator={false}>
       {isLoading && <Loader></Loader>}
@@ -51,7 +65,7 @@ const AddressScreen = ({ navigation, route }) => {
         <Text style={styles.headText}>Current address</Text>
         <View style={[styles.inputText, { paddingVertical: 12, paddingLeft: 10 }]}>
           <View style={{ flex: 1 }}>
-            <Text>{currentAddress?.line1}</Text>
+            <Text numberOfLines={1}>{currentAddress?.line1}</Text>
           </View>
           <Image source={require("./assets/map.png")} style={styles.mr10} />
         </View>
@@ -63,7 +77,7 @@ const AddressScreen = ({ navigation, route }) => {
         <Text style={[styles.headText]}>Search</Text>
         <View style={styles.inputText}>
           <View style={{ flex: 1 }}>
-            <Input placeholder='Search' />
+            <Input placeholder='Search' onChangeText={handleSearch} />
           </View>
           <Image source={require("./assets/search.png")} style={styles.mr10} />
         </View>
@@ -78,7 +92,7 @@ const AddressScreen = ({ navigation, route }) => {
               <View style={{ flex: 1 }}>
                 <Text numberOfLines={1}>{address?.line1}</Text>
               </View>
-              <Pressable onPress={() =>handleDeleteAddress(address?.id)}>
+              <Pressable onPress={() => handleDeleteAddress(address?.id)}>
                 <Text style={styles.addressDelete}>Delete</Text>
               </Pressable>
             </Pressable>
@@ -157,7 +171,7 @@ export const Input = (props) => {
         style={textStyles.input}
         placeholder={props.placeholder}
         value={props.value}
-        onChangeText={(num) => props.setValue(num)}
+        onChangeText={(num) => props.onChangeText(num)}
         placeholderTextColor='#000000'
         editable={props.editable !== false}
       />

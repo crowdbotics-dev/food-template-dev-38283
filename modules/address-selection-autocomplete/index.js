@@ -1,13 +1,13 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { View } from "react-native"
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete"
 import options from "./options"
 
 navigator.geolocation = require("@react-native-community/geolocation");
 
-const AddressAutoComplete = ({ navigation, route, onAddressSelect }) => {
+const AddressAutoComplete = ({ navigation, route, onAddressSelect, onChangeText, defaultInputValue }) => {
   const [inputValue, setInputValue] = useState("");
-  const [defaultValue, setDefaultValue] = useState("");
+  const [defaultValue, setDefaultValue] = useState(defaultInputValue);
   const { apiKey, autoCompleteStyles, settings } = options;
 
   const getAddressHandle = (data, address) => {
@@ -17,14 +17,21 @@ const AddressAutoComplete = ({ navigation, route, onAddressSelect }) => {
     if (onAddressSelect) {
       onAddressSelect(data, address);
     }
-    setDefaultValue(data.description);
-    setInputValue("")
+    setInputValue("");
   };
+
+  useEffect(() => {
+    setDefaultValue(defaultInputValue)
+  }, [defaultInputValue])
 
   const handleChange = text => {
     if (settings.onChangeText) {
       settings.onChangeText(text);
     }
+    if (onChangeText) {
+      onChangeText(text);
+    }
+    setDefaultValue(text);
     setInputValue(text);
   };
 
@@ -44,11 +51,11 @@ const AddressAutoComplete = ({ navigation, route, onAddressSelect }) => {
     <View
       style={[
         autoCompleteStyles.mainContainer,
-        { height: inputValue ? '100%' : 50 },
+        { height: inputValue ? '100%' : 50, backgroundColor: "#fff" },
       ]}
     >
       <GooglePlacesAutocomplete
-        autoFillOnNotFound={settings.autoFillOnNotFound || false}
+        autoFilsetInputValuelOnNotFound={settings.autoFillOnNotFound || false}
         placeholder={settings.placeholder || "Address"}
         minLength={settings.minLength || 2}
         autoFocus={false}
@@ -56,6 +63,7 @@ const AddressAutoComplete = ({ navigation, route, onAddressSelect }) => {
         fetchDetails={settings.fetchDetails || true}
         textInputProps={{
           onChangeText: text => handleChange(text),
+          value: defaultValue
         }}
         onPress={(data, details = null) => getAddressHandle(data, details)}
         query={{

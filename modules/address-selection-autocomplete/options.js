@@ -41,7 +41,6 @@ export const styles = StyleSheet.create({
     position: "absolute",
     bottom: 30,
     left: 30,
-    zIndex: 999,
     borderRadius: 30,
     elevation: 5
   },
@@ -63,7 +62,6 @@ export const styles = StyleSheet.create({
     elevation: 23
   },
   done: {
-    zIndex: 1000,
     left: "80%",
     position: "absolute",
     top: "85%",
@@ -86,18 +84,15 @@ export const autoCompleteStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    paddingHorizontal: 15,
     height: '100%',
     width: "90%"
   },
   autoCompleteCOntainer: { zIndex: 1000, width: "90%", alignSelf: "center" },
   textInputContainer: {
-    marginTop: 5,
-    zIndex: 1000,
   },
   textInput: {
     color: "#5d5d5d",
-    fontSize: 16,
+    fontSize: 14,
     flexWrap: "wrap",
     paddingVertical: 5
   },
@@ -106,7 +101,7 @@ export const autoCompleteStyles = StyleSheet.create({
   }
 });
 
-const GOOGLE_API_KEY = "Your Google Api key"
+const GOOGLE_API_KEY = "Your Google API key"
 const addressAutocompleteOptions = {
   placeholder: "Enter address",
   initialRegion: {

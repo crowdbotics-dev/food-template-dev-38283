@@ -114,7 +114,7 @@ export const startCheckout = createAsyncThunk(
 const initialState = {
   products: [],
   stores: [],
-  userAddress: {},
+  userAddress: [],
   myBasket: [],
   cartItems: 0,
   country: "",
