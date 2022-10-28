@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { Text, StyleSheet, View, Image, ScrollView, TouchableHighlight, Pressable, TextInput, LogBox } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { addUserAddress, getUserInfo, startCheckout } from "../../store";
-import Loader from "../../components/Loader";
 import { modules } from "@modules";
 import { GlobalOptionsContext } from '@options';
 
@@ -419,5 +418,38 @@ const btnStyles = StyleSheet.create({
   text: {
     fontWeight: "bold",
     fontSize: 15
+  }
+});
+
+
+import { ActivityIndicator } from "react-native";
+
+const Loader = () => {
+  return (
+    <View style={loaderStyles.container}>
+      <View style={loaderStyles.loaderContainer}>
+        <ActivityIndicator color="#000" />
+      </View>
+    </View>
+  );
+};
+const loaderStyles = StyleSheet.create({
+  container: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999
+  },
+  loaderContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F5F5F5",
+    shadowColor: "#000",
+    elevation: 3
   }
 });

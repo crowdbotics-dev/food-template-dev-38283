@@ -35,16 +35,6 @@ export const getProduct = async (url) => {
   return data;
 };
 
-export const productAvailability = async id => {
-  const response = await fetch(`${BASE_URL}/api/products/${id}/availability/`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" }
-  });
-  const data = await response.json();
-  return data;
-};
-
-
 export const getPrice = async (url) => {
   const response = await fetch(
     url,
@@ -58,9 +48,6 @@ export const getPrice = async (url) => {
   const data = await response.json();
   return data;
 };
-
-
-
 
 
 

@@ -146,9 +146,7 @@ const Home = ({ navigation }) => {
 };
 const styles = StyleSheet.create({
   container: {
-    // paddingHorizontal: 10,
     flex: 1,
-    // backgroundColor: "#F2F2F2",
   },
   searchContainer: {},
   scrollView: { marginBottom: 60 },
@@ -189,8 +187,8 @@ const styles = StyleSheet.create({
   },
   text: { color: "#888888", lineHeight: 20 },
   forgetContainer: {
-    marginTop: 35,
-    marginBottom: 10,
+    marginTop: "15%",
+    marginBottom: 15,
     paddingHorizontal: 10,
     flexDirection: "row",
     alignItems: "center",

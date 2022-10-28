@@ -1,13 +1,15 @@
 //@ts-nocheck
 import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, View, TouchableHighlight, Image, ScrollView } from "react-native";
+import { useSelector } from "react-redux";
 
 const OrderDetailScreen = ({navigation, route}) => {
 const [orderDetails, setOrderDetails] = useState({})
 const [orderDate, setOrderDate] = useState("");
 const [orderTime, setOrderTime] = useState("");
+const userInfo = useSelector(state => state?.ecommerce?.user);
+
   useEffect(() => {
-   
     if (route?.params?.currentOrder) {
       const {currentOrder, orderDate, orderTime} = route?.params;
       setOrderDetails(currentOrder);
@@ -56,7 +58,7 @@ const [orderTime, setOrderTime] = useState("");
           <Text style={styles.orderPrice}>{orderDetails?.total_incl_tax} {orderDetails?.currency}</Text>
         </View>
         <View style={styles.customInfo}>
-          <Text style={styles.customTitle}>{orderDetails?.shipping_address?.first_name + " " + orderDetails?.shipping_address?.last_name}</Text>
+          <Text style={styles.customTitle}>{userInfo?.first_name ? userInfo?.first_name + " " + userInfo?.last_name : userInfo?.username}</Text>
           <Text style={styles.addInfo}>Additional info</Text>
         </View>
 
@@ -80,7 +82,7 @@ const [orderTime, setOrderTime] = useState("");
         </View>
       </View>
       <View style={styles.cardContainer}>
-        <DetailsCard userName={orderDetails?.shipping_address?.first_name + " " + orderDetails?.shipping_address?.last_name}/>
+        <DetailsCard userName={userInfo?.first_name ? userInfo?.first_name + " " + userInfo?.last_name : userInfo?.username}/>
         <Button buttonText="Close" />
       </View>
       

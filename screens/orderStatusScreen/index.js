@@ -11,7 +11,8 @@ const OrderStatusScreen = ({ navigation }) => {
     const [orderTime, setOrderTime] = useState("");
     const orders = useSelector((state) => state?.ecommerce?.orderList);
 
-
+    const userInfo = useSelector(state => state?.ecommerce?.user);
+    
     const convertFrom24To12Format = (time24) => {
         const [sHours, minutes] = time24.match(/([0-9]{1,2}):([0-9]{2})/).slice(1);
         const hours = +sHours % 12 || 12;
@@ -107,7 +108,7 @@ const OrderStatusScreen = ({ navigation }) => {
 
             <View style={styles.emailContainer}>
                 <Text style={styles.mr10}>Full Name</Text>
-                <Text style={styles.text}>{currentOrder?.shipping_address?.first_name + " " + currentOrder?.shipping_address?.last_name}</Text>
+                <Text style={styles.text}>{userInfo?.first_name ? userInfo?.first_name + " " + userInfo?.last_name : userInfo?.username}</Text>
             </View>
             <View>
                 <Text style={styles.mr10}>Delivery address</Text>

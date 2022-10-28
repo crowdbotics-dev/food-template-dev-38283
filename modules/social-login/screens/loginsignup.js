@@ -424,7 +424,6 @@ export const SignInTab = ({ navigation }) => {
 
 import { Image, StyleSheet, TouchableHighlight } from "react-native";
 import { setItem } from "../../../store"
-import Loader from "../../../components/Loader"
 
 export const SignIn = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -885,5 +884,36 @@ const textStyles = StyleSheet.create({
     fontSize: 13,
     color: "#FA060D",
     paddingTop: 8
+  }
+});
+
+
+const Loader = () => {
+  return (
+    <View style={loaderStyles.container}>
+      <View style={loaderStyles.loaderContainer}>
+        <ActivityIndicator color="#000" />
+      </View>
+    </View>
+  );
+};
+const loaderStyles = StyleSheet.create({
+  container: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999
+  },
+  loaderContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F5F5F5",
+    shadowColor: "#000",
+    elevation: 3
   }
 });
