@@ -538,7 +538,7 @@ export const SignIn = ({ navigation }) => {
           <Pressable style={styles.iconContainer} onPress={() => onGoogleConnect(dispatch)}>
             <Image
               // @ts-ignore
-              source={require("../../../assets/googleIcon.png")}
+              source={require("../assets/googleIcon.png")}
               style={styles.icon}
             />
             <Text style={styles.socialText}>Google</Text>
@@ -546,7 +546,7 @@ export const SignIn = ({ navigation }) => {
           <Pressable style={styles.iconContainer} onPress={() => onFacebookConnect(dispatch)}>
             <Image
               // @ts-ignore
-              source={require("../../../assets/fbIcon.png")}
+              source={require("../assets/fbIcon.png")}
               style={styles.icon}
             />
             <Text style={styles.socialText}>Facebook</Text>
@@ -694,7 +694,7 @@ export const SignUp = ({ navigation }) => {
           <Pressable style={styles.iconContainer} onPress={() => onGoogleConnect(dispatch)}>
             <Image
               // @ts-ignore
-              source={require("../../../assets/googleIcon.png")}
+              source={require("../assets/googleIcon.png")}
               style={styles.icon}
             />
             <Text style={styles.socialText}>Google</Text>
@@ -702,7 +702,7 @@ export const SignUp = ({ navigation }) => {
           <Pressable style={styles.iconContainer} onPress={() => onFacebookConnect(dispatch)}>
             <Image
               // @ts-ignore
-              source={require("../../../assets/fbIcon.png")}
+              source={require("../assets/fbIcon.png")}
               style={styles.icon}
             />
             <Text style={styles.socialText}>Facebook</Text>
