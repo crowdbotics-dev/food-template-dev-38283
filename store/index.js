@@ -116,7 +116,6 @@ const initialState = {
   stores: [],
   userAddress: [],
   myBasket: [],
-  cartItems: 0,
   country: "",
   orderList: [],
   user: null,
@@ -131,11 +130,7 @@ const initialState = {
 const ecommerceSlice = createSlice({
   name: "ecommerce",
   initialState: initialState,
-  reducers: {
-    cartCounts: (state, action) => {
-      state.cartItems = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers: {
     [getProductsList.pending]: (state) => {
       if (state.api.loading === "idle") {
@@ -340,8 +335,6 @@ const ecommerceSlice = createSlice({
 });
 
 
-export const { cartCounts } = ecommerceSlice.actions
-
 export default ecommerceSlice.reducer;
 
 
@@ -355,11 +348,6 @@ export const getItem = async key => {
   return await AsyncStorage.getItem(key)
 };
 
-export const cartCount = async () => {
-  const basket = await getBaskets();
-  const productQuantity = basket[0]?.line_details.length.toString();
-  return productQuantity
-}
 
 
 

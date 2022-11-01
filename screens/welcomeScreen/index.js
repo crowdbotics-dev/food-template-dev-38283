@@ -37,7 +37,7 @@ const Welcome = ({ navigation }) => {
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non at sed.
       </Text>
       <View style={styles.buttonContainer}>
-        <Button buttonText="Sign Up" style={styles.button} onPress={() => navigation.navigate("login", {route: true})} />
+        <Button buttonText="Sign Up" style={styles.button} onPress={() => navigation.navigate("login", {route: "SignUpScreen"})} />
         <Button
           buttonText="Login"
           style={styles.button}
@@ -45,7 +45,7 @@ const Welcome = ({ navigation }) => {
           backgroundColor="#fff"
           textColor="#000"
           hideShadow
-          onPress={() => navigation.navigate("login")}
+          onPress={() => navigation.navigate("login", {route: "LoginScreen"})}
         />
       </View>
     </View>

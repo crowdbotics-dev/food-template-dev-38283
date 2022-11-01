@@ -137,24 +137,13 @@ const LoginScreen = () => {
 const Stack = createStackNavigator();
 
 const LoginSignup = ({ navigation, route }) => {
-  const [initializeRoute, setInitialRoute] = useState("");
+  const [initializeRoute, setInitialRoute] = useState(route?.params?.route);
 
-  useEffect(() => {
-    if (route?.params?.route) {
-      setInitialRoute(route?.params?.route)
-    }
-  }, [])
-
-  useEffect(() => {
-    setTimeout(() => {
-      setInitialRoute("")
-    }, 2000);
-  }, [])
 
   return (
-    <Stack.Navigator headerMode="none">
-      <Stack.Screen name="LoginScreen" component={initializeRoute ? SignUp : SignIn} />
-      <Stack.Screen name="SignUpScreen" component={initializeRoute ? SignIn : SignUp} />
+    <Stack.Navigator headerMode="none" initialRouteName={initializeRoute}>
+      <Stack.Screen name="LoginScreen" component={SignIn} />
+      <Stack.Screen name="SignUpScreen" component={SignUp} />
     </Stack.Navigator>
   );
 };

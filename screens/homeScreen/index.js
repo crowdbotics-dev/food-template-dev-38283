@@ -146,9 +146,7 @@ const Home = ({ navigation }) => {
 };
 const styles = StyleSheet.create({
   container: {
-    // paddingHorizontal: 10,
     flex: 1,
-    // backgroundColor: "#F2F2F2",
   },
   searchContainer: {},
   scrollView: { marginBottom: 60 },
@@ -189,8 +187,8 @@ const styles = StyleSheet.create({
   },
   text: { color: "#888888", lineHeight: 20 },
   forgetContainer: {
-    marginTop: 35,
-    marginBottom: 10,
+    marginTop: "15%",
+    marginBottom: 15,
     paddingHorizontal: 10,
     flexDirection: "row",
     alignItems: "center",
@@ -427,38 +425,3 @@ const footerStyles = StyleSheet.create({
     resizeMode: "contain"
   }
 });
-
-// {
-//   "basket": "https://drone-express-36671.botics.co/api/baskets/77/",
-//   "guest_email": "foo@example.com",
-//   "total": 40,
-//   "shipping_charge": {
-// "currency": "USD",
-// "excl_tax": "0.0",
-// "tax": "0.0"
-// },
-//   "shipping_method_code": "no-shipping-required",
-//   "shipping_address": {
-// "title": "Mr",
-// "first_name": "saad",
-// "last_name": "abid",
-// "line1": "Bwp, Pnb, PAK",
-// "line2": "BWP",
-// "line3": "",
-// "line4": "PNB",
-// "state": "PNB",
-// "postcode": "63100",
-// "phone_number": "",
-// "is_default_for_shipping": true,
-// "is_default_for_billing": true,
-// "country": "https://drone-express-36671.botics.co/api/countries/US/",
-// "lat": 0,
-// "lng": 0
-// },
-//   "payment": {
-//     "stripe": {
-//       "enabled": true,
-//       "amount": 40
-//     }
-//   }
-// }

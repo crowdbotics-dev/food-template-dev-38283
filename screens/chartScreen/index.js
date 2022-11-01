@@ -2,38 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Text, StyleSheet, View, Image, ScrollView, TouchableHighlight, Pressable, Alert } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
-import { addToBasket, cartCount, cartCounts, getBasket, removeFromBasket } from "../../store";
-import Loader from "../../components/Loader";
+import { getBasket, removeFromBasket } from "../../store";
 const ChartScreen = ({ navigation }) => {
   const [quantity, setQuantity] = useState(1);
   const [cartProducts, setCartProducts] = useState([]);
   const [basketData, setBasketData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-
-
-  const cartProduct = async () => {
-    await cartCount().then((res) => dispatch(cartCounts(res))).catch((err) => console.log("Error: ", err));
-  }
-
-
-  const handleConfirmation = async (id, infoId) => {
-    setIsLoading(true)
-    const data = {
-      quantity,
-      url: id,
-      partner_id: 4 || infoId,
-    }
-    try {
-      await dispatch(addToBasket(data)).then(async (res) => {
-        setIsLoading(false);
-        await cartProduct().then((res) => navigation.navigate("chartScreen"));
-      }).catch((error) => { console.log("error: ", error); setIsLoading(false) })
-    } catch (error) {
-      console.log("ERROR: ", error)
-      setIsLoading(false)
-    }
-  };
 
   
   const increment = () => {
@@ -144,7 +119,7 @@ const ChartScreen = ({ navigation }) => {
                   <Text style={styles.counterText}>{item?.quantity}</Text>
                   <Pressable
                     style={[styles.counterBtn, styles.increment]}
-                    onPress={() => handleConfirmation(item?.id, item?.product?.partner_info?.id)}>
+                    onPress={() => increment()}>
                     <Image
                       source={require("./assets/plusIcon.png")}
                       style={styles.icon}
@@ -445,5 +420,39 @@ const btnStyles = StyleSheet.create({
   text: {
     fontWeight: "bold",
     fontSize: 15
+  }
+});
+
+
+
+import { ActivityIndicator } from "react-native";
+
+const Loader = () => {
+  return (
+    <View style={loaderStyles.container}>
+      <View style={loaderStyles.loaderContainer}>
+        <ActivityIndicator color="#000" />
+      </View>
+    </View>
+  );
+};
+const loaderStyles = StyleSheet.create({
+  container: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999
+  },
+  loaderContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F5F5F5",
+    shadowColor: "#000",
+    elevation: 3
   }
 });
